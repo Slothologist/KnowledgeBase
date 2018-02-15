@@ -1,8 +1,10 @@
-from Classes.Classes import RCObject, Door, Location, Person, Room, KBase, Context
-
+from Classes.Classes import RCObjects, Crowd,Context,Arena,ObjectEncoder,KBase,Room,Person,Location,Door,RCObject,ObjectDecoder
+import json
 
 #Lists to add your entries to
-arena = []
+arena_r = []
+arena_l = []
+arena_d = []
 objs = []
 crowd = []
 #pers = [] #no person list as those will be hardcoded and properly generated during runtime
@@ -14,37 +16,36 @@ crowd = []
 
 #Arena-entries (locations, rooms etc)
 #<N_placementTwo> = (dinner table) | cabinet | bookshelf | (kitchen counter) | sofa | (couch table) | (side table) | (stove) | bed | closet | desk | bar;
-arena.append(Room(name='diningroom', numberOfDoors='2'))
-arena.append(Location(name='dinnertable', room='diningroom', isBeacon='True'))
-arena.append(Location(name='closet', room='diningroom', isBeacon='True'))
-arena.append(Location(name='desk', room='diningroom', isPlacement='True'))
+arena_r.append(Room(name='diningroom', numberOfDoors='2'))
+arena_l.append(Location(name='dinnertable', room='diningroom', isBeacon='True'))
+arena_l.append(Location(name='closet', room='diningroom', isBeacon='True'))
+arena_l.append(Location(name='desk', room='diningroom', isPlacement='True'))
 
-arena.append(Room(name='livingroom', numberOfDoors='0'))
-arena.append(Location(name='couchtable', room='livingroom'))
-arena.append(Location(name='sofa', room='livingroom'))
-arena.append(Location(name='bar', room='livingroom'))
-arena.append(Location(name='cabinet', room='livingroom'))
+arena_r.append(Room(name='livingroom', numberOfDoors='0'))
+arena_l.append(Location(name='couchtable', room='livingroom'))
+arena_l.append(Location(name='sofa', room='livingroom'))
+arena_l.append(Location(name='bar', room='livingroom'))
+arena_l.append(Location(name='cabinet', room='livingroom'))
 
-arena.append(Room(name='kitchen', numberOfDoors='0'))
-arena.append(Location(name='bookshelf', room='kitchen'))
-arena.append(Location(name='kitchencounter', room='kitchen'))
-arena.append(Location(name='stove', room='kitchen'))
+arena_r.append(Room(name='kitchen', numberOfDoors='0'))
+arena_l.append(Location(name='bookshelf', room='kitchen'))
+arena_l.append(Location(name='kitchencounter', room='kitchen'))
+arena_l.append(Location(name='stove', room='kitchen'))
 
-arena.append(Room(name='bedroom', numberOfDoors='1'))
-arena.append(Location(name='bed', room='bedroom'))
-arena.append(Location(name='sidetable', room='bedroom'))
+arena_r.append(Room(name='bedroom', numberOfDoors='1'))
+arena_l.append(Location(name='bed', room='bedroom'))
+arena_l.append(Location(name='sidetable', room='bedroom'))
 
-arena.append(Room(name='outside', numberOfDoors='0'))#if you have doors to the outside it would make sense to also annotate an extra room for the outside
+arena_r.append(Room(name='outside', numberOfDoors='0'))#if you have doors to the outside it would make sense to also annotate an extra room for the outside
 
-arena.append(Door(roomOne='outside', roomTwo='bedroom'))
-arena.append(Door(roomOne='diningroom', roomTwo='outside'))
+arena_d.append(Door(roomOne='outside', roomTwo='bedroom'))
+arena_d.append(Door(roomOne='diningroom', roomTwo='outside'))
 
 #Objects-Entries
 #wie mit fork, spoon and knife umgehen?
 #categorys:
 #fruit, container, food, drink, snack, cleaning stuff,
 #weitere infos folgen vmtl
-#gewicht fällt raus
 objs.append(RCObject(name="apple",          category='fruit', color="red and green",         location="desk", room="kitchen", shape="round", size='1'))
 objs.append(RCObject(name="bag",            category='container', color="brown",             location="bookshelf", room="living room", shape="quite flat", size='4'))
 objs.append(RCObject(name="banana milk",    category='drink', color="blue and white",        location="kitchen counter", room="kitchen", shape="boxy", size='1'))
@@ -83,13 +84,23 @@ objs.append(RCObject(name="towel",          category='cleaning stuff', color="pu
 objs.append(RCObject(name="water",          category='drink', color="light blue",            location="kitchen counter", room="kitchen", shape="cylindrical", size='2'))
 objs.append(RCObject(name="white bowl",     category='container', color="white",             location="bookshelf", room="living room", shape="that af a deep plate", size='2'))
 
-#context, will use default initializer
-context = Context()
-
 #Crowd-entries
 #dummys, overwritten by reportGroup
 crowd.append(Person(age='3', gender="male", gesture="pointing", pose="sitting", shirtcolor="blue"))
 crowd.append(Person(age='1', gender="female", gesture="waving", pose="standing", shirtcolor="green"))
 
-kbase = KBase(arena=arena, crowd=crowd, context=context, rcobjects=objs)
+#
+arena = Arena(rooms=arena_r, doors=arena_d, locations=arena_l)
+crowd = Crowd(persons=crowd)
+rcobjects = RCObjects(objects=objs)
+#context, will use default initializer
+context = Context()
+
+
+kbase = KBase(arena=arena, crowd=crowd, context=context, rcobjects=rcobjects)
+
+#dump = json.dumps(kbase, cls=ObjectEncoder, indent=2, sort_keys=True)
+#print(dump)
+#print(json.loads(dump, cls=ObjectDecoder).arena.locations)
+
 
