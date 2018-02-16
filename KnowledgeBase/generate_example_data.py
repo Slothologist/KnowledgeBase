@@ -122,3 +122,5 @@ kbase = KBase(arena=arena, crowd=crowd, context=context, rcobjects=rcobjects, id
 #print(json.loads(dump, cls=ObjectDecoder).arena.locations)
 
 
+
+
