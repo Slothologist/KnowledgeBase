@@ -69,12 +69,28 @@ class RCObjects():
         self.objects = objects
 
 
+class Annotation():
+    pass
+
+
+class Point2D():
+    pass
+
+
+class PrecisePolygon():
+    pass
+
+
+class RobotPosition():
+    pass
+
 class KBase():
-    def __init__(self, arena=Arena(), crowd=Crowd(), context=Context(), rcobjects=RCObjects()):
+    def __init__(self, arena=Arena(), crowd=Crowd(), context=Context(), rcobjects=RCObjects(), identifier=''):
         self.arena = arena
         self.crowd = crowd
         self.context = context
         self.rcobjects = rcobjects
+        self.identifier = identifier
 
 
 class ObjectEncoder(json.JSONEncoder):
