@@ -1,130 +1,86 @@
-import json
-import inspect
+import mongoengine as me
 
 
-class Person():
-    def __init__(self, age='0', gender='', shirtcolor='', pose='', gesture=''):
-        self.age = age
-        self.gender = gender
-        self.shirtcolor = shirtcolor
-        self.pose = pose
-        self.gesture = gesture
-        #self.pointcloud TODO
+class Person(me.Document):
+    age = me.IntField(default=0)
+    gender = me.StringField(max_length=20, default='')
+    shirtcolor = me.StringField(max_length=20, default='')
+    pose = me.StringField(max_length=20, default='')
+    gesture = me.StringField(max_length=20, default='')
+    #pointcloud
 
 
-class Room():
-    def __init__(self, name='', numberOfDoors='0'):
-        self.name = name
-        self.numberOfDoors = numberOfDoors
+class Crowd(me.Document):
+    persons = me.ListField(me.ReferenceField(Person))
 
 
-class RCObject():
-    def __init__(self, name='', location='', category='', size='0', shape='', color='', type='', weight='0',
-                 graspdifficulty='0', room=''):
-        self.name = name
-        self.location = location
-        self.category = category
-        self.size = size
-        self.shape = shape
-        self.color = color
-        self.type = type
-        self.weight = weight
-        self.graspdifficulty = graspdifficulty
-        self.room = room
+class RobotPosition(me.Document):
+    label = me.StringField(max_length=100, default='')
+    x = me.FloatField(default=0.0)
+    y = me.FloatField(default=0.0)
+    yaw = me.FloatField(default=0.0)
 
 
-class Location():
-    def __init__(self, name='', room='', isBeacon='False', isPlacement='False'):
-        self.name = name
-        self.room = room
-        self.isBeacon = isBeacon
-        self.isPlacement = isPlacement
-
-
-class Door():
-    def __init__(self, roomOne='', roomTwo=''):
-        self.roomOne = roomOne
-        self.roomTwo = roomTwo
-
-
-class Context():
-    def __init__(self, content='But this is the first question!'):
-        self.content = content
-
-
-class Arena():
-    def __init__(self, rooms=[], locations=[], doors=[]):
-        self.locations = locations
-        self.rooms = rooms
-        self.doors = doors
-
-
-class Crowd():
-    def __init__(self, persons=[]):
-        self.persons = persons
-
-
-class RCObjects():
-    def __init__(self, objects=[]):
-        self.objects = objects
-
-
-class Annotation():
+class PrecisePolygon(me.Document):
+    #replace with me.polygon or something like that
     pass
 
 
-class Point2D():
-    pass
+class Annotation(me.Document):
+    label = me.StringField(max_length=100, default='')
+    polygon = me.ReferenceField(PrecisePolygon)
+    viewpoints = me.ListField(me.ReferenceField(RobotPosition))
 
 
-class PrecisePolygon():
-    pass
+class Room(me.Document):
+    name = me.StringField(max_length=50, unique=True, default='')
+    numberOfDoors = me.IntField(default=0)
+    annotation = me.ReferenceField(Annotation)
 
 
-class RobotPosition():
-    pass
-
-class KBase():
-    def __init__(self, arena=Arena(), crowd=Crowd(), context=Context(), rcobjects=RCObjects(), identifier=''):
-        self.arena = arena
-        self.crowd = crowd
-        self.context = context
-        self.rcobjects = rcobjects
-        self.identifier = identifier
+class Location(me.Document):
+    name = me.StringField(max_length=50, unique=True, default='')
+    room = me.ReferenceField(Room)
+    isBeacon = me.BooleanField(default=False)
+    isPlacement = me.BooleanField(default=False)
+    annotation = me.ReferenceField(Annotation)
 
 
-class ObjectEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, "to_json"):
-            return self.default(obj.to_json())
-        elif hasattr(obj, "__dict__"):
-            d = dict(
-                (key, value)
-                for key, value in inspect.getmembers(obj)
-                if not key.startswith("__")
-                and not inspect.isabstract(value)
-                and not inspect.isbuiltin(value)
-                and not inspect.isfunction(value)
-                and not inspect.isgenerator(value)
-                and not inspect.isgeneratorfunction(value)
-                and not inspect.ismethod(value)
-                and not inspect.ismethoddescriptor(value)
-                and not inspect.isroutine(value)
-            )
-            d['python_class_name'] = obj.__class__.__name__
-            return self.default(d)
-        return obj
+class Door(me.Document):
+    roomOne = me.ReferenceField(Room)
+    roomTwo = me.ReferenceField(Room)
+    annotation = me.ReferenceField(Annotation)
 
 
-class ObjectDecoder(json.JSONDecoder):
-    def __init__(self, *args, **kwargs):
-        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+class Arena(me.Document):
+    locations = me.ListField(me.ReferenceField(Location))
+    rooms = me.ListField(me.ReferenceField(Room))
+    doors = me.ListField(me.ReferenceField(Door))
 
-    def object_hook(self, obj):
-        if 'python_class_name' not in obj:
-            return obj
-        python_class_str = obj.pop('python_class_name')
-        get_python_class = lambda x: globals()[x]
-        python_class = get_python_class(python_class_str)
-        python_obj = python_class(**obj)
-        return python_obj
+
+class RCObject(me.Document):
+    name = me.StringField(max_length=50, unique=True, default='')
+    location = me.ReferenceField(Location)
+    category = me.StringField(max_length=50, default='')
+    shape = me.StringField(max_length=20, default='')
+    color = me.StringField(max_length=20, default='')
+    type = me.StringField(max_length=20, default='')
+    size = me.IntField(default=0)
+    weight = me.IntField(default=0)
+
+
+class RCObjects(me.Document):
+    objects = me.ListField(me.ReferenceField(RCObject))
+
+
+class Context(me.Document):
+    lastquestion = me.StringField(max_length=300, default='But this is the first question!')
+    content = me.GenericReferenceField(choices=[RCObjects, Person, Room, Location, Door])
+
+
+class KBase(me.Document):
+    identifier = me.StringField(max_length=50, unique=True, default='')
+    arena = me.ListField(me.ReferenceField(Arena))
+    crowd = me.ListField(me.ReferenceField(Crowd))
+    context = me.ListField(me.ReferenceField(Context))
+    rcobjects = me.ListField(me.ReferenceField(Person))
