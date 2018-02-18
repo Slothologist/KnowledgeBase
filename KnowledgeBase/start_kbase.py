@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
+# ros imports
 import rospy
+from KnowledgeBase.srv import *
+
+# database imports
 from Classes.Classes import *
 import Classes.Classes
 import inspect
+
+# config
 import yaml
 import sys
 
@@ -40,7 +46,20 @@ kbase = KBase.objects(identifier=data['db_identifier'])[0]
 switch_db('default')
 kbase.save()
 
+def handle_querry(req):
+    return None
+
+def handle_data(req):
+    return None
+
+# initialize the rosnode and services
 rospy.init_node('KnowledgeBase')
+querry_handler = rospy.Service('KBase/querry', Querry, handle_data)
+data_handler = rospy.Service('KBase/data', Data, handle_data)
+
+rospy.spin()
+
+
 
 
 
