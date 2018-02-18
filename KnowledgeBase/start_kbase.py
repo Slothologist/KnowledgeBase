@@ -1,4 +1,6 @@
-#import rospy
+#!/usr/bin/env python
+
+import rospy
 from Classes.Classes import *
 import Classes.Classes
 import inspect
@@ -38,7 +40,7 @@ kbase = KBase.objects(identifier=data['db_identifier'])[0]
 switch_db('default')
 kbase.save()
 
-#TODO: rospy support
+rospy.init_node('KnowledgeBase')
 
 
 
