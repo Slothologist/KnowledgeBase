@@ -1,19 +1,6 @@
 import mongoengine as me
 
 
-class Person(me.EmbeddedDocument):
-    age = me.IntField(default=0)
-    gender = me.StringField(max_length=20, default='')
-    shirtcolor = me.StringField(max_length=20, default='')
-    pose = me.StringField(max_length=20, default='')
-    gesture = me.StringField(max_length=20, default='')
-    #pointcloud
-
-
-class Crowd(me.EmbeddedDocument):
-    persons = me.ListField(me.EmbeddedDocumentField(Person))
-
-
 class RobotPosition(me.EmbeddedDocument):
     label = me.StringField(max_length=100, default='')
     x = me.FloatField(default=0.0)
@@ -25,6 +12,20 @@ class Annotation(me.EmbeddedDocument):
     label = me.StringField(max_length=100, default='')
     polygon = me.MultiPointField()
     viewpoints = me.ListField(me.EmbeddedDocumentField(RobotPosition))
+
+
+class Person(me.Document):
+    age = me.IntField(default=0)
+    gender = me.StringField(max_length=50, default='')
+    shirtcolor = me.StringField(max_length=50, default='')
+    pose = me.StringField(max_length=50, default='')
+    gesture = me.StringField(max_length=50, default='')
+    lastKnownPosition = me.EmbeddedDocumentField(RobotPosition)
+    #pointcloud
+
+
+class Crowd(me.Document):
+    persons = me.ListField(me.ReferenceField(Person))
 
 
 class Room(me.Document):
@@ -47,35 +48,35 @@ class Door(me.Document):
     annotation = me.EmbeddedDocumentField(Annotation)
 
 
-class Arena(me.EmbeddedDocument):
+class Arena(me.Document):
     locations = me.ListField(me.ReferenceField(Location))
+    doors = me.ListField(me.ReferenceField(Door))
     rooms = me.ListField(me.ReferenceField(Room))
-    doors = me.ListField(me.EmbeddedDocumentField(Door))
 
 
-class RCObject(me.EmbeddedDocument):
+class RCObject(me.Document):
     name = me.StringField(max_length=50, unique=True, default='')
     location = me.ReferenceField(Location)
     category = me.StringField(max_length=50, default='')
-    shape = me.StringField(max_length=20, default='')
-    color = me.StringField(max_length=20, default='')
-    type = me.StringField(max_length=20, default='')
+    shape = me.StringField(max_length=50, default='')
+    color = me.StringField(max_length=50, default='')
+    type = me.StringField(max_length=50, default='')
     size = me.IntField(default=0)
     weight = me.IntField(default=0)
 
 
-class RCObjects(me.EmbeddedDocument):
-    objects = me.ListField(me.ReferenceField(RCObject))
+class RCObjects(me.Document):
+    rcobjects = me.ListField(me.ReferenceField(RCObject))
 
 
-class Context(me.EmbeddedDocument):
+class Context(me.Document):
     lastquestion = me.StringField(max_length=300, default='But this is the first question!')
-    content = me.GenericReferenceField(choices=[RCObjects, Person, Room, Location, Door])
+    content = me.DynamicField(choices=[RCObjects, Person, Room, Location, Door])
 
 
 class KBase(me.Document):
-    identifier = me.StringField(max_length=50, unique=True, default='')
-    arena = me.ListField(me.EmbeddedDocumentField(Arena))
-    crowd = me.ListField(me.EmbeddedDocumentField(Crowd))
-    context = me.ListField(me.EmbeddedDocumentField(Context))
-    rcobjects = me.ListField(me.EmbeddedDocumentField(Person))
+    identifier = me.StringField(max_length=50, unique=True)
+    context = me.ReferenceField(Context)
+    crowd = me.ReferenceField(Crowd)
+    rcobjects = me.ReferenceField(RCObjects)
+    arena = me.ReferenceField(Arena)
