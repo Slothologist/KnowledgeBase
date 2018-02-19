@@ -21,7 +21,8 @@ class Person(me.Document):
     pose = me.StringField(max_length=50, default='')
     gesture = me.StringField(max_length=50, default='')
     lastKnownPosition = me.EmbeddedDocumentField(RobotPosition)
-    #pointcloud
+    name = me.StringField(max_length=100, default='')
+    # pointcloud
 
 
 class Crowd(me.Document):
