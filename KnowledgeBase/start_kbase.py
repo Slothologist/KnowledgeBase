@@ -5,8 +5,8 @@ import rospy
 from KnowledgeBase.srv import *
 
 # database imports
-from Classes.Classes import *
-import Classes.Classes
+from Classes import *
+import Classes
 import inspect
 
 # config
@@ -15,6 +15,9 @@ import sys
 
 # handlers
 import handling.querry_handling as qh
+
+# mongoengine
+import mongoengine as me
 
 argv = sys.argv
 if len(argv) < 2:
@@ -39,7 +42,7 @@ def switch_db(to):
     :param to: String; Name of the database to switch to
     :return: None
     '''
-    for name, obj in inspect.getmembers(Classes.Classes):
+    for name, obj in inspect.getmembers(Classes):
         if inspect.isclass(obj):
             obj._meta['db_alias'] = to
             obj._collection = None
@@ -57,7 +60,7 @@ def handle_querry(req):
         'who': qh.handle_who,
         'what': qh.handle_what,
         'where': qh.handle_where,
-        'which': qh.handling.handle_which,
+        'which': qh.handle_which,
         'when': qh.handle_when,
         'show': qh.handle_show
     }
@@ -65,15 +68,18 @@ def handle_querry(req):
     q_word = querry[0].lower()
     if q_word not in accepted_w_word:
         return 'Failed, bad question word'
-    accepted_w_word[q_word](querry[1:])
+    ans = QuerryResponse()
+    ans.answer = accepted_w_word[q_word](querry[1:]) or 'Failed'
+    return ans
 
 
 
 def handle_data(req):
     success = True
     print('command: ' + req.command + '; object: ' + req.object)
-
-    return success
+    ans = DataResponse()
+    ans.success = success
+    return ans
 
 
 # initialize the rosnode and services
