@@ -1,5 +1,6 @@
 import mongoengine as me
 from Annotation import Annotation
+import xml.etree.ElementTree as ET
 
 
 class Room(me.Document):
@@ -8,4 +9,10 @@ class Room(me.Document):
     annotation = me.EmbeddedDocumentField(Annotation)
 
     def to_xml(self):
-        return ''
+        attribs = vars(self)
+        annot = attribs.pop('annotation')
+        root = ET.Element('ROOM', attrib=attribs)
+        root.append(annot.to_xml())
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'unknown'
+        return root

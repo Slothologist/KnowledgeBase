@@ -1,5 +1,6 @@
 import mongoengine as me
 from Location import Location
+import xml.etree.ElementTree as ET
 
 
 class RCObject(me.Document):
@@ -13,4 +14,12 @@ class RCObject(me.Document):
     weight = me.IntField(default=0)
 
     def to_xml(self):
-        return ''
+        attribs = vars(self)
+        location = attribs.pop('location')
+        attribs['location'] = location.name
+        attribs['room'] = location.room.name
+        attribs['graspdifficulty'] = '0'
+        root = ET.Element('ROOM', attrib=attribs)
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'unknown'
+        return root

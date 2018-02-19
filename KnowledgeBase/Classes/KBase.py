@@ -3,6 +3,7 @@ from Context import Context
 from Crowd import Crowd
 from RCObjects import RCObjects
 from Arena import Arena
+import xml.etree.ElementTree as ET
 
 
 class KBase(me.Document):
@@ -13,4 +14,11 @@ class KBase(me.Document):
     arena = me.ReferenceField(Arena)
 
     def to_xml(self):
-        return ''
+        root = ET.Element('KBASE')
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'unknown'
+        root.append(self.crowd.to_xml())
+        root.append(self.arena.to_xml())
+        root.append(self.rcobjects.to_xml())
+        root.append(self.context.to_xml())
+        return root

@@ -1,5 +1,6 @@
 import mongoengine as me
 from RobotPosition import RobotPosition
+import xml.etree.ElementTree as ET
 
 
 class Person(me.Document):
@@ -13,4 +14,13 @@ class Person(me.Document):
     # pointcloud
 
     def to_xml(self):
-        return ''
+        attribs = vars(self)
+        posi = attribs.pop('lastKnownPosition')
+        name = attribs.pop('name') #todo: remove
+        root = ET.Element('PERSON', attrib=attribs)
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'unknown'
+        point = ET.SubElement('POINT2D', {'scope': 'GLOBAL', 'x': posi.x, 'y': posi.y})
+        pointgen = ET.SubElement(point, 'GENERATOR')
+        pointgen.text = 'unknown'
+        return root
