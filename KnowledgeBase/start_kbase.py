@@ -61,10 +61,12 @@ def handle_querry(req):
         'what': qh.handle_what,
         'where': qh.handle_where,
         'which': qh.handle_which,
-        'when': qh.handle_when,
-        'show': qh.handle_show,
         'in which': qh.handle_in_which,
-        'how many': qh.handle_how_many
+        'how many': qh.handle_how_many,
+        'get': qh.handle_get,
+
+        'when': qh.handle_when,
+        'show': qh.handle_show
     }
     msg = req.querry.lower()
     querry = msg.split(' ')

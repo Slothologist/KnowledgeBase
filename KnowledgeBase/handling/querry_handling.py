@@ -136,8 +136,8 @@ def handle_in_which(querry):
         for loc in Location.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
             return ET.tostring(loc.to_xml(), encoding='utf-8')
 
-    print('Failed, querry ' + ' '.join(querry) + ' could not !')
-    return 'Failed, something unforseen happened, maybe the querry '
+    print('Failed, querry ' + ' '.join(querry) + ' could not find a corresponding item!')
+    return 'Failed, something unforseen happened, maybe the there is no room/location this point/object/location/room/person lies in'
 
 
 def handle_which(querry):
@@ -162,12 +162,25 @@ def handle_how_many(querry):
 
 def handle_get(querry):
     '''
-
+    Method to get a non-basic object. querry is always a list of exactly one element, which can be 'kbase', 'rcobjects',
+    'crowd', 'arena' or 'context'.
     :param querry:
     :return:
     '''
     # TODO: filter wrong querries
-    pass
+    if querry[0] is 'kbase':
+        return ET.tostring(KBase.objects()[0].to_xml(), encoding='utf-8')
+    elif querry[0] is 'arena':
+        return ET.tostring(KBase.objects()[0].arena.to_xml(), encoding='utf-8')
+    elif querry[0] is 'rcobjects':
+        return ET.tostring(KBase.objects()[0].rcobjects.to_xml(), encoding='utf-8')
+    elif querry[0] is 'crowd':
+        return ET.tostring(KBase.objects()[0].crowd.to_xml(), encoding='utf-8')
+    elif querry[0] is 'context':
+        return ET.tostring(KBase.objects()[0].context.to_xml(), encoding='utf-8')
+
+    print('Failed, querry get ' + querry[0] + ' could not be answered!')
+    return 'Failed, querry get ' + querry[0] + ' could not be answered!'
 
 #################### low prio:
 
