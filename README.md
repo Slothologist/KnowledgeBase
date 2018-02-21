@@ -25,7 +25,11 @@ word, e.g. where, who, what, which, when. This word defines the type of the retu
 
 
 #### Where
-Will return a Viewpoint. 
+Will return a Viewpoint corresponding to a given identifier. 'Where' querries shall be of the form 
+'where *unique_identifier* [*viewpoint_label*]'. The *unique identifier* can be of either a 
+Location, Person, Room or RCObject. The optional *viewpoint label* can be specified to retrieve a 
+specific viewpoint a Room or Location may have by its label. If *viewpoint label* is not specified,
+the Viewpoint with label 'main' will be used.
 
 ##### Examples
 * where kitchen
@@ -39,7 +43,10 @@ Will return a Viewpoint.
 
 
 #### What
-Will return a RCObject (or string).
+Will return a RCObject (or String). 'What' querries shall be of the form 'what [*attribute_name*]
+*unique_identifier*'. The *unique identifier* shall be the 'name' of a RCObject. The optional 
+*attribute name* can be specified to retrieve (instead of the complete RCObject) the value of a
+specific attribute of the RCObject specified by the *unique identifier* as a String.
 
 ##### Examples
 * what cup
@@ -50,7 +57,11 @@ Will return a RCObject (or string).
   * Will return a string which is the 'color' of the RCObject with name 'apple'
 
 #### Which
-Will return a List of basic database objects (BDO, i.e. Person, Location, Room, Door, RCObject).
+Will return a List of basic database objects (BDO, i.e. Person, Location, Room, Door, RCObject)
+where a given attribute has a given value. 'Which' querries shall be of the form 'which *BDO* 
+*attribute* *value*'. The *BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
+*attribute* must be one of the attributes the *BDO* has. The *value* shall be the value of the
+given *attribute*.
 
 ##### Examples
 * which rcobject color green
@@ -62,14 +73,18 @@ Will return a List of basic database objects (BDO, i.e. Person, Location, Room, 
   * Will return a List of Person. Every Persons 'gender' attribute will have the value 'female'.
 
 #### Who
-will return a Person.
+will return a Person corresponding to a given identifier. 'Who' querries shall be of the form 'who
+*unique_identifier*. The *unique identifier* shall be the 'name' of a Person.
 
 ##### Examples
 * who peter
   * Will return the Person with the 'name' attributes value being 'peter' 
  
 #### In which
-Will return either a Location or a Room.
+Will return either a Location or a Room. 'In which' querries shall be of the form 'in which
+('Location' | 'Room') *unique_identifier*'. The *unique identifier* can be of either a 
+Location, Person, Room or RCObject. The second argument so to say must be either 'Location' or 
+'Room' and will determine, if this querry returns a Location or Room.
 
 ##### Examples
 * in which room cup
@@ -79,9 +94,13 @@ Will return either a Location or a Room.
   * Will return the Location in which the 'lastKnownPosition' of the Person with the name 'alex' 
   is located. Note that this may return just a String with a error message, if alex is not known 
   to be in any Location.
+* in which room point *<Point2D_xml>*
 
 #### How many
-Will return a int.
+Will return a int corresponding to the number of distinct occurences a specified attribute has
+in a BDO. 'How many' querries shall be of the form 'how many *attribute* *BDO*'. The 
+*BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
+*attribute* must be one of the attributes the *BDO* has.
 
 ##### Examples
 * how many category rcobject
@@ -93,7 +112,8 @@ Will return a int.
   will return the number of distinct Persons.
 
 #### Get
-With get you can 
+With get you can retrieve a non basic data object. 'Get' querries shall be of the form 'get *NBDO*'.
+The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 
 ##### Examples
 * get kbase
