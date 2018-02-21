@@ -1,9 +1,10 @@
 from Classes import *
 import xml.etree.ElementTree as ET
+from utils import retrieve_object_by_identifier, deserialize_point2d
 
 def str_to_xml(str):
     # TODO: rewrite proper
-    return '<xml str= ' + str + '>'
+    return '<str val= ' + str + '>'
 
 
 def handle_who(querry):
@@ -31,7 +32,7 @@ def handle_what(querry):
     if len(querry) > 1:
         attr = querry[0]
         ans = obj.__dict__[attr]
-        return ans
+        return str(ans)
 
     return ET.tostring(obj.to_xml(), encoding='utf-8')
 
@@ -50,20 +51,18 @@ def handle_where(querry):
     viewpoint_name = None
     if len(querry) > 1:
         viewpoint_name = querry[1]
-    all_entrys = Person.objects(name=name) + Location.object(name=name) + Room.objects(name=name) + RCObject.objects(name=name)
-    if len(all_entrys) < 1:
-        print('Failed! Found no person, location, room or RCObject with name ' + querry[0])
-        return 'Failed! Found no person, location, room or RCObject with name ' + querry[0]
-    if len(all_entrys) > 1:
-        print('Found more than one person, location, room or RCObject with name ' + querry[0] + ' using a random one.')
-    entry = all_entrys[0]
+    entry = retrieve_object_by_identifier(name)
+
+    if not entry:
+        return 'Failed! Found no person, location, room or RCObject with name ' + name
 
     # retrieve annotation of the fetched thingy
     annot = None
     if type(entry) == Room or type(entry) == Location:
         annot = entry.annotation
     elif type(entry) == Person:
-        return ET.tostring(entry.lastKnownPosition.to_xml(), encoding='utf-8') # persons have a position themselves so we do not need to go over annot
+        return ET.tostring(entry.lastKnownPosition.to_xml(), encoding='utf-8') # persons have a position themselves
+        #  so we do not need to go over annot
     elif type(entry) == RCObject:
         annot = entry.location.annotation
 
@@ -77,14 +76,68 @@ def handle_where(querry):
     return ET.tostring(viewpoint.to_xml(), encoding='utf-8')
 
 
-def handle_in_what(querry):
+def handle_in_which(querry):
     '''
-
+    querry is a list with 3-(4+) elements for which the second element is always either 'location' or 'room' and the
+    third is either the keyword 'point' or a unique identifier of either a location, person, room or object. In the case
+    the third element is 'point', a Point2D in xml format should follow.
     :param querry:
     :return:
     '''
     # TODO: filter wrong querries
-    pass
+    querry = querry[1:] # throw away 'which'
+
+    # due to hacky programming, the elements 4+ should be joined and parsed into point2D
+    point = None
+    if len(querry) > 2 and querry[1] is 'point':
+        point = ' '.join(querry[2:])
+        point = deserialize_point2d(point)
+
+    # retrieve thingy by identifier if we dont already have a point
+    if not point:
+        entry = retrieve_object_by_identifier(querry[1])
+        if not entry:
+            return 'Failed! Found no person, location, room or RCObject with name ' + querry[1]
+
+        # now there are 4 possibilities: we have retrieved a person (->point), location, room or object
+        if type(entry) == Person:
+            point = entry.lastKnownPosition
+
+
+        elif type(entry) == Location:
+            if querry[0] is 'room':
+                return ET.tostring(entry.room.to_xml(), encoding='utf-8')
+            elif querry[0] is 'location':
+                return ET.tostring(entry.to_xml(), encoding='utf-8')
+
+
+        elif type(entry) == Room:
+            if querry[0] is 'room':
+                return ET.tostring(entry.to_xml(), encoding='utf-8')
+            elif querry[0] is 'location':
+                print('Failed, querry ' + ' '.join(querry) + ' makes no sense! A room cannot be in a location.')
+                return 'Failed, a room cannot be in a location!'
+
+
+        elif type(entry) == RCObject:
+            if querry[0] is 'room':
+                return ET.tostring(entry.location.room.to_xml(), encoding='utf-8')
+            elif querry[0] is 'location':
+                return ET.tostring(entry.location.to_xml(), encoding='utf-8')
+
+    # for persons and given points we need to keep going
+    ## retrieve room/ location in which this point lies
+
+
+    if querry[0] is 'room':
+        for room in Room.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+            return ET.tostring(room.to_xml(), encoding='utf-8')
+    elif querry[0] is 'location':
+        for loc in Location.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+            return ET.tostring(loc.to_xml(), encoding='utf-8')
+
+    print('Failed, querry ' + ' '.join(querry) + ' could not !')
+    return 'Failed, something unforseen happened, maybe the querry '
 
 
 def handle_which(querry):
@@ -97,6 +150,24 @@ def handle_which(querry):
     # TODO: filter wrong querries
     pass
 
+def handle_how_many(querry):
+    '''
+
+    :param querry:
+    :return:
+    '''
+    # TODO: filter wrong querries
+    pass
+
+
+def handle_get(querry):
+    '''
+
+    :param querry:
+    :return:
+    '''
+    # TODO: filter wrong querries
+    pass
 
 #################### low prio:
 

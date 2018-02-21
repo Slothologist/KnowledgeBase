@@ -63,15 +63,14 @@ def handle_querry(req):
         'which': qh.handle_which,
         'when': qh.handle_when,
         'show': qh.handle_show,
-        'in what': qh.handle_in_what,
-        'at what': qh.handle_in_what,
-        'in which': qh.handle_in_what,
-        'at which': qh.handle_in_what
+        'in which': qh.handle_in_which,
+        'how many': qh.handle_how_many
     }
-    querry = req.querry.split(' ')
-    q_word = querry[0].lower()
+    msg = req.querry.lower()
+    querry = msg.split(' ')
+    q_word = querry[0]
     if q_word not in accepted_w_word or \
-                            q_word + querry[1].lower() in accepted_w_word:
+                            q_word + ' ' + querry[1] in accepted_w_word:
         return 'Failed, bad question word'
     ans = QuerryResponse()
     ans.answer = accepted_w_word[q_word](querry[1:]) or 'Failed'

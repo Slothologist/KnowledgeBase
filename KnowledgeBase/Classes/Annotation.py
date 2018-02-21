@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 
 class Annotation(me.EmbeddedDocument):
     label = me.StringField(max_length=100, default='')
-    polygon = me.MultiPointField()
+    polygon = me.PolygonField()
     viewpoints = me.ListField(me.EmbeddedDocumentField(RobotPosition))
 
     def to_xml(self):
