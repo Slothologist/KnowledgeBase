@@ -29,6 +29,6 @@ def filter_fillwords(query):
     :param query: the unfiltered query as a list, split by space
     :return: the filtered query as a list, split by space
     '''
-    fillwords = ['are', 'is', 'was', 'the', 'of', 'that', 'were', 'have', 'has']
+    fillwords = ['are', 'is', 'was', 'the', 'of', 'that', 'were', 'have', 'has', 'a', 'an']
     ret_query = [x for x in query if x not in fillwords]
     return ret_query
