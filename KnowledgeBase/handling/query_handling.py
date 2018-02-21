@@ -149,7 +149,26 @@ def handle_which(query):
     :return:
     '''
     # TODO: filter wrong querries
-    pass
+    # get class of searched after elements
+    class_of_bdo = None
+    if query[1] is 'rcobject' or query[0] is 'rcobjects':
+        class_of_bdo = RCObject
+    elif query[1] is 'person' or query[0] is 'persons':
+        class_of_bdo = Person
+    elif query[1] is 'location' or query[0] is 'locations':
+        class_of_bdo = Location
+    elif query[1] is 'room' or query[0] is 'rooms':
+        class_of_bdo = Room
+    # get attribute for which the number of distinct elements shall be found
+    attribute_of_class = query[1]
+    value = query[2]
+    method_parameter_dict = {attribute_of_class : value}
+    list_of_searched_bdo = class_of_bdo.objects(**method_parameter_dict)
+    ret_str = ''
+    for obj in list_of_searched_bdo:
+        ret_str += ET.tostring(obj.to_xml(), encoding='utf-8')
+    ret_str = ret_str or 'Failed, could not find either the attribute or the value!'
+    return ret_str
 
 def handle_how_many(query):
     '''
