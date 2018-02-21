@@ -14,7 +14,7 @@ import yaml
 import sys
 
 # handlers
-import handling.querry_handling as qh
+import handling.query_handling as qh
 
 # mongoengine
 import mongoengine as me
@@ -55,7 +55,7 @@ switch_db('default')
 kbase.save()
 
 
-def handle_querry(req):
+def handle_query(req):
     accepted_w_word = {
         'who': qh.handle_who,
         'what': qh.handle_what,
@@ -68,14 +68,14 @@ def handle_querry(req):
         'when': qh.handle_when,
         'show': qh.handle_show
     }
-    msg = req.querry.lower()
-    querry = msg.split(' ')
-    q_word = querry[0]
+    msg = req.query.lower()
+    query = msg.split(' ')
+    q_word = query[0]
     if q_word not in accepted_w_word or \
-                            q_word + ' ' + querry[1] in accepted_w_word:
+                            q_word + ' ' + query[1] in accepted_w_word:
         return 'Failed, bad question word'
     ans = QuerryResponse()
-    ans.answer = accepted_w_word[q_word](querry[1:]) or 'Failed'
+    ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
     return ans
 
 
@@ -90,7 +90,7 @@ def handle_data(req):
 
 # initialize the rosnode and services
 rospy.init_node('KnowledgeBase')
-querry_handler = rospy.Service('KBase/querry', Querry, handle_querry)
+query_handler = rospy.Service('KBase/query', Querry, handle_query)
 data_handler = rospy.Service('KBase/data', Data, handle_data)
 
 rospy.spin()

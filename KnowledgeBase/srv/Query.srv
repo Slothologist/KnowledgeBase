@@ -1,5 +1,5 @@
 #request fields
-string querry
+string query
 ---
 #response fields
 string answer

@@ -53,7 +53,7 @@ find_package(catkin REQUIRED COMPONENTS message_generation std_msgs)
 ADD_SERVICE_FILES(
    DIRECTORY KnowledgeBase/srv
    FILES
-   Querry.srv
+   Query.srv
    Data.srv
 )
 

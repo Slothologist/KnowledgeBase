@@ -13,19 +13,19 @@ coming soon...
 coming soon...
 
 ## Services
-The Node realises querrys as Ros Servicecalls. The main call for querryies is under the topic 
-/KBase/querry, accepts a querry in string form and returns one or more database objects in xml 
+The Node realises queries as Ros Servicecalls. The main call for queries is under the topic 
+/KBase/query, accepts a query in string form and returns one or more database objects in xml 
 form. 
 
-Querries are accepted in a form inspired by native human speech. Each querry starts with a question
+Queries are accepted in a form inspired by native human speech. Each query starts with a question
 word, e.g. where, who, what, which, when. This word defines the type of the return value.
 
 
-### Querrys
+### Querys
 
 
 #### Where
-Will return a Viewpoint corresponding to a given identifier. 'Where' querries shall be of the form 
+Will return a Viewpoint corresponding to a given identifier. 'Where' queries shall be of the form 
 'where *unique_identifier* [*viewpoint_label*]'. The *unique identifier* can be of either a 
 Location, Person, Room or RCObject. The optional *viewpoint label* can be specified to retrieve a 
 specific viewpoint a Room or Location may have by its label. If *viewpoint label* is not specified,
@@ -43,7 +43,7 @@ the Viewpoint with label 'main' will be used.
 
 
 #### What
-Will return a RCObject (or String). 'What' querries shall be of the form 'what [*attribute_name*]
+Will return a RCObject (or String). 'What' queries shall be of the form 'what [*attribute_name*]
 *unique_identifier*'. The *unique identifier* shall be the 'name' of a RCObject. The optional 
 *attribute name* can be specified to retrieve (instead of the complete RCObject) the value of a
 specific attribute of the RCObject specified by the *unique identifier* as a String.
@@ -58,7 +58,7 @@ specific attribute of the RCObject specified by the *unique identifier* as a Str
 
 #### Which
 Will return a List of basic database objects (BDO, i.e. Person, Location, Room, Door, RCObject)
-where a given attribute has a given value. 'Which' querries shall be of the form 'which *BDO* 
+where a given attribute has a given value. 'Which' queries shall be of the form 'which *BDO* 
 *attribute* *value*'. The *BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
 *attribute* must be one of the attributes the *BDO* has. The *value* shall be the value of the
 given *attribute*.
@@ -73,7 +73,7 @@ given *attribute*.
   * Will return a List of Person. Every Persons 'gender' attribute will have the value 'female'.
 
 #### Who
-will return a Person corresponding to a given identifier. 'Who' querries shall be of the form 'who
+will return a Person corresponding to a given identifier. 'Who' queries shall be of the form 'who
 *unique_identifier*. The *unique identifier* shall be the 'name' of a Person.
 
 ##### Examples
@@ -81,10 +81,10 @@ will return a Person corresponding to a given identifier. 'Who' querries shall b
   * Will return the Person with the 'name' attributes value being 'peter' 
  
 #### In which
-Will return either a Location or a Room. 'In which' querries shall be of the form 'in which
+Will return either a Location or a Room. 'In which' queries shall be of the form 'in which
 ('Location' | 'Room') *unique_identifier*'. The *unique identifier* can be of either a 
 Location, Person, Room or RCObject. The second argument so to say must be either 'Location' or 
-'Room' and will determine, if this querry returns a Location or Room.
+'Room' and will determine, if this query returns a Location or Room.
 
 ##### Examples
 * in which room cup
@@ -98,7 +98,7 @@ Location, Person, Room or RCObject. The second argument so to say must be either
 
 #### How many
 Will return a int corresponding to the number of distinct occurences a specified attribute has
-in a BDO. 'How many' querries shall be of the form 'how many *attribute* *BDO*'. The 
+in a BDO. 'How many' queries shall be of the form 'how many *attribute* *BDO*'. The 
 *BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
 *attribute* must be one of the attributes the *BDO* has.
 
@@ -112,7 +112,7 @@ in a BDO. 'How many' querries shall be of the form 'how many *attribute* *BDO*'.
   will return the number of distinct Persons.
 
 #### Get
-With get you can retrieve a non basic data object. 'Get' querries shall be of the form 'get *NBDO*'.
+With get you can retrieve a non basic data object. 'Get' queries shall be of the form 'get *NBDO*'.
 The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 
 ##### Examples
