@@ -154,12 +154,29 @@ def handle_which(query):
 def handle_how_many(query):
     '''
     query is a list of length 2. the second element is either location, room, rcobject or person. the first element is
-    a attribute of the first element. 
+    a attribute of the first element.
     :param query:
     :return:
     '''
     # TODO: filter wrong querries
-    pass
+    # get class of searched after elements
+    class_of_bdo = None
+    if query[1] is 'rcobject' or query[1] is 'rcobjects':
+        class_of_bdo = RCObject
+    elif query[1] is 'person' or query[1] is 'persons':
+        class_of_bdo = Person
+    elif query[1] is 'location' or query[1] is 'locations':
+        class_of_bdo = Location
+    elif query[1] is 'room' or query[1] is 'rooms':
+        class_of_bdo = Room
+    if not class_of_bdo:
+        print('Failed, ' + query[1] + ' is no valid class for how many!')
+        return 'Failed, ' + query[1] + ' is no valid class for how many!'
+
+    # get attribute for which the number of distinct elements shall be found
+    attribute_of_class = query[0]
+    distinct = class_of_bdo.distinct(attribute_of_class)
+    return str(len(distinct))
 
 
 def handle_get(query):

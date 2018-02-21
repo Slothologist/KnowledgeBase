@@ -22,3 +22,13 @@ def retrieve_object_by_identifier(name):
 
 def deserialize_point2d(point):
     return 'not implemented yet'
+
+def filter_fillwords(query):
+    '''
+    Filters some fillerwords out of a query.
+    :param query: the unfiltered query as a list, split by space
+    :return: the filtered query as a list, split by space
+    '''
+    fillwords = ['are', 'is', 'was', 'the', 'of', 'that', 'were', 'have', 'has']
+    ret_query = [x for x in query if x not in fillwords]
+    return ret_query

@@ -19,6 +19,9 @@ import handling.query_handling as qh
 # mongoengine
 import mongoengine as me
 
+#utils
+from utils import filter_fillwords
+
 argv = sys.argv
 if len(argv) < 2:
     print('Need path to configfile as first parameter!')
@@ -70,6 +73,7 @@ def handle_query(req):
     }
     msg = req.query.lower()
     query = msg.split(' ')
+    query = filter_fillwords(query)
     q_word = query[0]
     if q_word not in accepted_w_word or \
                             q_word + ' ' + query[1] in accepted_w_word:

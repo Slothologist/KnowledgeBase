@@ -20,6 +20,14 @@ form.
 Queries are accepted in a form inspired by native human speech. Each query starts with a question
 word, e.g. where, who, what, which, when. This word defines the type of the return value.
 
+Queries can be enhanced by adding 'filler' words, making the queries more human-like. These 
+filler words are (amongst others) 'are', 'is', 'was', 'the', 'of', 'that', 'were', 'have' and 'has'.
+This makes theses queries valid:
+* where is the kitchen
+* what is the size of the milk
+* which rcobjects have the shape cylindrical
+* in which room is the cup
+* how many category have the rcobjects
 
 ### Querys
 
@@ -29,7 +37,7 @@ Will return a Viewpoint corresponding to a given identifier. 'Where' queries sha
 'where *unique_identifier* [*viewpoint_label*]'. The *unique identifier* can be of either a 
 Location, Person, Room or RCObject. The optional *viewpoint label* can be specified to retrieve a 
 specific viewpoint a Room or Location may have by its label. If *viewpoint label* is not specified,
-the Viewpoint with label 'main' will be used.
+the Viewpoint with label 'main' will be used. 
 
 ##### Examples
 * where kitchen
