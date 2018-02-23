@@ -2,7 +2,7 @@ import mongoengine as me
 import xml.etree.ElementTree as ET
 
 
-class RobotPosition(me.EmbeddedDocument):
+class Robotposition(me.EmbeddedDocument):
     label = me.StringField(max_length=100, default='')
     x = me.FloatField(default=0.0)
     y = me.FloatField(default=0.0)
@@ -21,7 +21,7 @@ class RobotPosition(me.EmbeddedDocument):
 
     @classmethod
     def from_xml(cls, xml_tree):
-        roboposi = RobotPosition()
+        roboposi = Robotposition()
         roboposi.label = xml_tree.get('label')
         roboposi_found = False
         for child in xml_tree.getchildren():

@@ -21,6 +21,8 @@ import mongoengine as me
 
 #utils
 from utils import filter_fillwords, save_complete_db
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 argv = sys.argv
 if len(argv) < 2:
@@ -53,8 +55,8 @@ def switch_db(to):
 
 # copy the knowledge base from permanent to temporary database
 switch_db('perm_db')
-kbase = KBase.objects().first()
-print(type(kbase))
+kbase = Kbase.objects().first()
+kbase_str = minidom.parseString(ET.tostring(kbase.to_xml(), encoding='utf-8')).toprettyxml(indent="   ") # iterate once through the entire base to make sure everything is cached
 switch_db('default')
 save_complete_db(kbase)
 

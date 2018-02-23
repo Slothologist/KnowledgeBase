@@ -1,12 +1,12 @@
 import mongoengine as me
-from RobotPosition import RobotPosition
+from RobotPosition import Robotposition
 import xml.etree.ElementTree as ET
 
 
 class Annotation(me.EmbeddedDocument):
     label = me.StringField(max_length=100, default='')
     polygon = me.PolygonField()
-    viewpoints = me.ListField(me.EmbeddedDocumentField(RobotPosition))
+    viewpoints = me.ListField(me.EmbeddedDocumentField(Robotposition))
 
     def to_xml(self):
         attribs = {x: self.__getattribute__(x) for x in self._fields}

@@ -1,5 +1,5 @@
 import mongoengine as me
-from RobotPosition import RobotPosition
+from RobotPosition import Robotposition
 import xml.etree.ElementTree as ET
 
 
@@ -9,7 +9,7 @@ class Person(me.Document):
     shirtcolor = me.StringField(max_length=50, default='')
     pose = me.StringField(max_length=50, default='')
     gesture = me.StringField(max_length=50, default='')
-    lastKnownPosition = me.EmbeddedDocumentField(RobotPosition)
+    lastKnownPosition = me.EmbeddedDocumentField(Robotposition)
     name = me.StringField(max_length=100, default='')
     # pointcloud
 

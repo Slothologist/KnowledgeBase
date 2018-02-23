@@ -1,14 +1,14 @@
 import mongoengine as me
 from Crowd import Crowd
-from RCObjects import RCObjects
+from RCObjects import Rcobjects
 from Arena import Arena
 import xml.etree.ElementTree as ET
 
 
-class KBase(me.Document):
+class Kbase(me.Document):
     identifier = me.StringField(max_length=50, unique=True)
     crowd = me.ReferenceField(Crowd)
-    rcobjects = me.ReferenceField(RCObjects)
+    rcobjects = me.ReferenceField(Rcobjects)
     arena = me.ReferenceField(Arena)
 
     def to_xml(self):

@@ -3,7 +3,7 @@ from Location import Location
 import xml.etree.ElementTree as ET
 
 
-class RCObject(me.Document):
+class Rcobject(me.Document):
     name = me.StringField(max_length=50, unique=True, default='')
     location = me.ReferenceField(Location)
     category = me.StringField(max_length=50, default='')

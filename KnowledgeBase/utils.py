@@ -12,7 +12,7 @@ def retrieve_object_by_identifier(name):
     all_entrys = list(Person.objects(name=name)) + \
                  list(Location.objects(name=name)) + \
                  list(Room.objects(name=name)) + \
-                 list(RCObject.objects(name=name))
+                 list(Rcobject.objects(name=name))
     if len(all_entrys) < 1:
         print('Failed! Found no person, location, room or RCObject with name ' + name)
         return None
@@ -40,7 +40,6 @@ def filter_fillwords(query):
     return ret_query
 
 def save_complete_db(kbase):
-    print('DEBUG: ' + str(kbase))
     for room in kbase.arena.rooms:
         room.save()
     for location in kbase.arena.locations:
@@ -81,7 +80,7 @@ def add_annotation(arenaobj, annotations_xml):
                 if annotChild.tag == 'VIEWPOINT':
                     if annotChild.get('label') == 'main':
                         vp_main = True
-                    vp = RobotPosition.from_xml(annotChild)
+                    vp = Robotposition.from_xml(annotChild)
                     vps.append(vp)
                 elif annotChild.tag == 'PRECISEPOLYGON':
                     poly = True
