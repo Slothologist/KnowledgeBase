@@ -14,13 +14,16 @@ class Person(me.Document):
     # pointcloud
 
     def to_xml(self):
-        attribs = vars(self)
+        attribs = {x: self.__getattribute__(x) for x in self._fields}
         posi = attribs.pop('lastKnownPosition')
         name = attribs.pop('name') #todo: remove
+        attribs.pop('id')
+        attribs = {x: str(attribs[x]) for x in attribs}
+
         root = ET.Element('PERSON', attrib=attribs)
         gen = ET.SubElement(root, 'GENERATOR')
         gen.text = 'unknown'
-        point = ET.SubElement('POINT2D', {'scope': 'GLOBAL', 'x': posi.x, 'y': posi.y})
+        point = ET.SubElement(root, 'POINT2D', attrib={'scope': 'GLOBAL', 'x': str(posi.x), 'y': str(posi.y)})
         pointgen = ET.SubElement(point, 'GENERATOR')
         pointgen.text = 'unknown'
         return root

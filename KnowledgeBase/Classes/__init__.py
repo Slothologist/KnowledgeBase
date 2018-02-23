@@ -1,6 +1,5 @@
 from Annotation import Annotation
 from Arena import Arena
-from Context import Context
 from Crowd import Crowd
 from Door import Door
 from KBase import KBase

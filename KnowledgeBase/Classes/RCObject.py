@@ -14,12 +14,14 @@ class RCObject(me.Document):
     weight = me.IntField(default=0)
 
     def to_xml(self):
-        attribs = vars(self)
+        attribs = {x: self.__getattribute__(x) for x in self._fields}
         location = attribs.pop('location')
-        attribs['location'] = location.name
         attribs['room'] = location.room.name
+        attribs['location'] = location.name
         attribs['graspdifficulty'] = '0'
-        root = ET.Element('ROOM', attrib=attribs)
+        attribs.pop('id')
+        attribs = {x: str(attribs[x]) for x in attribs}
+        root = ET.Element('RCOBJECT', attrib=attribs)
         gen = ET.SubElement(root, 'GENERATOR')
         gen.text = 'unknown'
         return root

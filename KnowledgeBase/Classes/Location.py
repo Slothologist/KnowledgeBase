@@ -12,9 +12,11 @@ class Location(me.Document):
     annotation = me.EmbeddedDocumentField(Annotation)
 
     def to_xml(self):
-        attribs = vars(self)
+        attribs = {x: self.__getattribute__(x) for x in self._fields}
         annot = attribs.pop('annotation')
-        attribs['room'] = self.room.name #todo: room as reference?
+        attribs.pop('id')
+        attribs['room'] = attribs['room'].name #todo: room as reference?
+        attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element('LOCATION', attrib=attribs)
         root.append(annot.to_xml())
         gen = ET.SubElement(root, 'GENERATOR')

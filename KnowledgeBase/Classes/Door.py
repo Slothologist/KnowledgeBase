@@ -10,9 +10,10 @@ class Door(me.Document):
     annotation = me.EmbeddedDocumentField(Annotation)
 
     def to_xml(self):
-        attribs = vars(self)
+        attribs = {x: self.__getattribute__(x) for x in self._fields}
         annot = attribs.pop('annotation')
-        root = ET.Element('DOOR', attrib={'roomOne':self.roomOne.name, 'roomTwo':self.roomTwo.name})
+        attribs.pop('id')
+        root = ET.Element('DOOR', attrib={'roomOne':attribs['roomOne'].name, 'roomTwo':attribs['roomTwo'].name})
         root.append(annot.to_xml())
         gen = ET.SubElement(root, 'GENERATOR')
         gen.text = 'unknown'

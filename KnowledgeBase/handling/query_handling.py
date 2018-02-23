@@ -130,10 +130,10 @@ def handle_in_which(query):
 
 
     if query[0] is 'room':
-        for room in Room.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+        for room in Room.objects(annotation__polygon__geo_intersects=point):
             return ET.tostring(room.to_xml(), encoding='utf-8')
     elif query[0] is 'location':
-        for loc in Location.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+        for loc in Location.objects(annotation__polygon__geo_intersects=point):
             return ET.tostring(loc.to_xml(), encoding='utf-8')
 
     print('Failed, query ' + ' '.join(query) + ' could not find a corresponding item!')

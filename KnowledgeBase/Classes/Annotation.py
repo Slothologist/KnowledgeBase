@@ -9,9 +9,10 @@ class Annotation(me.EmbeddedDocument):
     viewpoints = me.ListField(me.EmbeddedDocumentField(RobotPosition))
 
     def to_xml(self):
-        attribs = vars(self)
+        attribs = {x: self.__getattribute__(x) for x in self._fields}
         viewpoints = attribs.pop('viewpoints')
         polygon = attribs.pop('polygon')
+        attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element('ANNOTATION', attrib=attribs)
         gen = ET.SubElement(root, 'GENERATOR')
         gen.text = 'unknown'

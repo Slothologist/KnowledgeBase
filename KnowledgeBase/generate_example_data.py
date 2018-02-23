@@ -1,4 +1,14 @@
-from Classes.Classes import RCObjects, Crowd, Context, Arena, Room, Person, Location, Door, RCObject, KBase
+from Classes import *
+import mongoengine as me
+from utils import save_complete_db, add_annotation
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+import sys
+
+
+db = me.connect('default_db')
+db.drop_database('default_db')
 
 #Lists to add your entries to
 arena_rooms = []
@@ -6,6 +16,26 @@ arena_locations = []
 arena_doors = []
 objs = []
 pers = [] #no person list as those will be hardcoded and properly generated during runtime
+
+
+# load annotation file. general stuff (argument handling etc)
+args = sys.argv
+if len(args) < 2:
+    print('Usage: python generate_example_data.py <AnnotationFile>')
+    sys.exit()
+
+inputstr = ''
+
+with open(args[1], 'r') as f:
+    inputstr = f.read()
+
+annotations = [] # list where the xml annotations will be saved
+
+annotationTree = ET.fromstring(inputstr)
+
+for annotation in annotationTree.getchildren():
+    if annotation.tag == 'ANNOTATION':
+        annotations.append(annotation)
 
 ##################################################################################################################################################################
 
@@ -97,51 +127,33 @@ objs.append(RCObject(name="sponge",         category='cleaning stuff', color="li
 objs.append(RCObject(name="tomato pasta",   category='food', color="red and green",          location=stove, shape="that of a toothpaste tube", size='2'))
 objs.append(RCObject(name="towel",          category='cleaning stuff', color="purple",       location=closet, shape="rather flat", size='2'))
 objs.append(RCObject(name="water",          category='drink', color="light blue",            location=kitchencounter, shape="cylindrical", size='2'))
-objs.append(RCObject(name="white bowl",     category='container', color="white",             location=bookshelf, shape="that af a deep plate", size='2'))
+objs.append(RCObject(name="white bowl",     category='container', color="white",             location=bookshelf, shape="that of a deep plate", size='2'))
 
 #Crowd-entries
 #dummys, overwritten by reportGroup
-pers.append(Person(age='3', gender="male", gesture="pointing", pose="sitting", shirtcolor="blue"))
-pers.append(Person(age='1', gender="female", gesture="waving", pose="standing", shirtcolor="green"))
+pers.append(Person(age='3', gender="male", gesture="pointing", pose="sitting", shirtcolor="blue", lastKnownPosition=RobotPosition(x=1.2, y=3.4, label='bla', theta=4.6)))
+pers.append(Person(age='1', gender="female", gesture="waving", pose="standing", shirtcolor="green", lastKnownPosition=RobotPosition(x=5.6, y=7.8, label='bla2', theta=6.4)))
+
+######################################################################################################################
+
+#match read annotations to rooms, locations and doors
+
+arena_rooms = [add_annotation(x, annotations) for x in arena_rooms]
+arena_doors = [add_annotation(x, annotations) for x in arena_doors]
+arena_locations = [add_annotation(x, annotations) for x in arena_locations]
 
 #
 arena = Arena(rooms=arena_rooms, doors=arena_doors, locations=arena_locations)
 crowd = Crowd(persons=pers)
 rcobjects = RCObjects(rcobjects=objs)
-#context, will use default initializer
-context = Context()
 
-
-kbase = KBase(arena=arena, crowd=crowd, rcobjects=rcobjects, context=context, identifier='TestKBase')
+kbase = KBase(arena=arena, crowd=crowd, rcobjects=rcobjects, identifier='TestKBase')
 
 #dump = json.dumps(kbase, cls=ObjectEncoder, indent=2, sort_keys=True)
 #print(dump)
 #print(json.loads(dump, cls=ObjectDecoder).arena.locations)
 
-import mongoengine as me
+print(minidom.parseString(ET.tostring(kbase.to_xml(), encoding='utf-8')).toprettyxml(indent="   "))
 
-db = me.connect('default_db')
-db.drop_database('default_db')
-
-#presave documents so that references can be created
-for room in arena_rooms:
-    room.save()
-for location in arena_locations:
-    location.save()
-for door in arena_doors:
-    door.save()
-for obj in objs:
-    obj.save()
-for per in pers:
-    per.save()
-
-arena.save()
-crowd.save()
-context.save()
-rcobjects.save()
-
-kbase.save()
-
-
-
-
+save_complete_db(kbase)
+exit(0)

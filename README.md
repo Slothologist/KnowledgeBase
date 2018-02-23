@@ -4,10 +4,18 @@ A simple Database for Ros
 ## Dependencies
 pip install mongo mongoengine
 
-...or just use pip install
+...or just use pip install .
 
 ## Overview
 coming soon...
+
+### Starting the rosnode
+Use the launchfile contained in the launch folder. A config file for the KBasenode must be
+given as additional paramenter. 
+
+### Physical location of the database
+MongoDB's default saving location is under /var/lib/mongodb. This can be changed in the
+/etc/mongod.conf. 
 
 ## Database Schema
 coming soon...
@@ -29,7 +37,7 @@ This makes theses queries valid:
 * in which room is the cup
 * how many category have the rcobjects
 
-### Querys
+### Queries
 
 
 #### Where

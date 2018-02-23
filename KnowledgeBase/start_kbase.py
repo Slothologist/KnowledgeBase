@@ -20,7 +20,7 @@ import handling.query_handling as qh
 import mongoengine as me
 
 #utils
-from utils import filter_fillwords
+from utils import filter_fillwords, save_complete_db
 
 argv = sys.argv
 if len(argv) < 2:
@@ -53,9 +53,10 @@ def switch_db(to):
 
 # copy the knowledge base from permanent to temporary database
 switch_db('perm_db')
-kbase = KBase.objects(identifier=data['db_identifier'])[0]
+kbase = KBase.objects().first()
+print(type(kbase))
 switch_db('default')
-kbase.save()
+save_complete_db(kbase)
 
 
 def handle_query(req):
@@ -78,7 +79,7 @@ def handle_query(req):
     if q_word not in accepted_w_word or \
                             q_word + ' ' + query[1] in accepted_w_word:
         return 'Failed, bad question word'
-    ans = QuerryResponse()
+    ans = QueryResponse()
     ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
     return ans
 
@@ -94,7 +95,7 @@ def handle_data(req):
 
 # initialize the rosnode and services
 rospy.init_node('KnowledgeBase')
-query_handler = rospy.Service('KBase/query', Querry, handle_query)
+query_handler = rospy.Service('KBase/query', Query, handle_query)
 data_handler = rospy.Service('KBase/data', Data, handle_data)
 
 rospy.spin()
