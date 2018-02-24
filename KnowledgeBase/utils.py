@@ -35,7 +35,7 @@ def filter_fillwords(query):
     :param query: the unfiltered query as a list, split by space
     :return: the filtered query as a list, split by space
     '''
-    fillwords = ['are', 'is', 'was', 'the', 'of', 'that', 'were', 'have', 'has', 'a', 'an']
+    fillwords = ['are', 'is', 'was', 'the', 'of', 'that', 'were', 'have', 'has', 'a', 'an', 'in', 'at', 'on', 'around']
     ret_query = [x for x in query if x not in fillwords]
     return ret_query
 
@@ -109,3 +109,34 @@ def get_class_of_bdo(bdo):
     elif bdo == 'room' or bdo == 'rooms':
         class_of_bdo = Room
     return class_of_bdo
+
+def reduce_query(query_string, accepted_w_words):
+    query_string = query_string.lower()
+    # check with which q_word the query starts and replace all of its ' ' with '_'
+    for w_word in accepted_w_words:
+        query_string = query_string.replace(w_word, w_word.replace(' ', '_'))
+
+    # build a list with all names found in the database
+    names =  [x.name for x in Rcobject.objects()]
+    names += [x.name for x in Location.objects()]
+    names += [x.name for x in Room.objects()]
+    names += [x.name for x in Person.objects()]
+
+    # check if the query contains any of those names
+    # if yes, replace them with a version where all ' ' are replaced with '_'
+    for name in names:
+        query_string = query_string.replace(name, name.replace(' ', '_'))
+
+    # then split the query as before by ' '
+    query_list = query_string.split(' ')
+
+    # filter the fillerwords
+    query_list = filter_fillwords(query_list)
+
+    # then iterate through the query and replace all '_' with ' ' again
+    query_list = [query.replace('_', ' ') for query in query_list]
+
+    # also try not to destroy any xml which may be given
+    # smarter way for future: create a sentence-metric with which you could determine the kind of question given (1) and
+    # also which parts are most likely important compounds, e.g. a persons first and sir name (2)
+    return query_list

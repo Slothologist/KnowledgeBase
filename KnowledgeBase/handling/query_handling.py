@@ -42,8 +42,17 @@ def handle_what(query):
         return 'Failed, did not find an object with name ' + name + ' but an ' + str(type(obj))
     if len(query) > 1:
         attr = query[0]
-        ans = obj.__dict__[attr]
-        return str(ans)
+        attribs = {x: obj.__getattribute__(x) for x in obj._fields}
+        ans = attribs[attr]
+        if type(ans) == float:
+            return float_to_xml(ans)
+        elif type(ans) == int:
+            return int_to_xml(ans)
+        elif type(ans) == unicode:
+            return str_to_xml(ans.encode('ascii','replace'))
+        elif type(ans) == Location:
+            return str_to_xml(ans.name)
+        return 'Failed, type of attribute ' + attr + ' is ' + str(type(ans)) +', and there is no xml-ifier for that!'
 
     return ET.tostring(obj.to_xml(), encoding='utf-8')
 

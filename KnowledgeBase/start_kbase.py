@@ -20,10 +20,11 @@ import handling.query_handling as qh
 import mongoengine as me
 
 #utils
-from utils import filter_fillwords, save_complete_db
+import utils
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 
+
+# initialize database node by loading config file
 argv = sys.argv
 if len(argv) < 2:
     print('Need path to configfile as first parameter!')
@@ -31,6 +32,7 @@ if len(argv) < 2:
 path_to_config = argv[1]
 data = yaml.safe_load(open(path_to_config))
 
+#initialize config parameters
 db_to_use_as_blueprint_name = data['db_name']
 copy_on_startup = data['copy_on_startup']
 
@@ -61,7 +63,7 @@ if copy_on_startup:
     kbase = Kbase.objects().first()
     kbase_str = ET.tostring(kbase.to_xml(), encoding='utf-8') # iterate once through the entire base to make sure everything is cached
     switch_db('default')
-    save_complete_db(kbase)
+    utils.save_complete_db(kbase)
 else:
     me.connect(db_to_use_as_blueprint_name)
 
@@ -81,17 +83,12 @@ def handle_query(req):
     }
     ans = QueryResponse()
     msg = req.query.lower()
-    query = msg.split(' ')
-    print('DEBUG: got query ' + str(query))
+    print('DEBUG: got query ' + str(msg))
+    query = utils.reduce_query(msg, accepted_w_word)
+    print('DEBUG: reduced query ' + str(query))
     q_word = query[0]
-    q_word2 = ' '.join(query[0:2])
-    query = filter_fillwords(query)
     if q_word not in accepted_w_word:
-        if q_word2 in accepted_w_word:
-            print(query[2:])
-            ans.answer = accepted_w_word[q_word2](query[2:])
-        else:
-            ans.answer = 'Failed, bad question word for query: ' + msg
+        ans.answer = 'Failed, bad question word for query: ' + msg
     else:
         ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
     return ans
