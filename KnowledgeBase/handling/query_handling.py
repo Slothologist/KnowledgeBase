@@ -28,7 +28,7 @@ def handle_what(query):
     # query is either list with one element ('[what] cup'), so we return a object
     # or with two elements ('[what] shape cup'), so we return the attribute of the object as string
     # TODO: filter wrong querries
-    obj = RCObject.objects(query[-1])[0]
+    obj = Rcobject.objects(query[-1])[0]
     if len(query) > 1:
         attr = query[0]
         ans = obj.__dict__[attr]
@@ -63,7 +63,7 @@ def handle_where(query):
     elif type(entry) == Person:
         return ET.tostring(entry.lastKnownPosition.to_xml(), encoding='utf-8') # persons have a position themselves
         #  so we do not need to go over annot
-    elif type(entry) == RCObject:
+    elif type(entry) == Rcobject:
         annot = entry.location.annotation
 
     # retrieve viewpoint
@@ -119,7 +119,7 @@ def handle_in_which(query):
                 return 'Failed, a room cannot be in a location!'
 
 
-        elif type(entry) == RCObject:
+        elif type(entry) == Rcobject:
             if query[0] is 'room':
                 return ET.tostring(entry.location.room.to_xml(), encoding='utf-8')
             elif query[0] is 'location':
@@ -152,7 +152,7 @@ def handle_which(query):
     # get class of searched after elements
     class_of_bdo = None
     if query[1] is 'rcobject' or query[0] is 'rcobjects':
-        class_of_bdo = RCObject
+        class_of_bdo = Rcobject
     elif query[1] is 'person' or query[0] is 'persons':
         class_of_bdo = Person
     elif query[1] is 'location' or query[0] is 'locations':
@@ -181,7 +181,7 @@ def handle_how_many(query):
     # get class of searched after elements
     class_of_bdo = None
     if query[1] is 'rcobject' or query[1] is 'rcobjects':
-        class_of_bdo = RCObject
+        class_of_bdo = Rcobject
     elif query[1] is 'person' or query[1] is 'persons':
         class_of_bdo = Person
     elif query[1] is 'location' or query[1] is 'locations':
@@ -207,15 +207,15 @@ def handle_get(query):
     '''
     # TODO: filter wrong querries
     if query[0] is 'kbase':
-        return ET.tostring(KBase.objects()[0].to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].to_xml(), encoding='utf-8')
     elif query[0] is 'arena':
-        return ET.tostring(KBase.objects()[0].arena.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].arena.to_xml(), encoding='utf-8')
     elif query[0] is 'rcobjects':
-        return ET.tostring(KBase.objects()[0].rcobjects.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].rcobjects.to_xml(), encoding='utf-8')
     elif query[0] is 'crowd':
-        return ET.tostring(KBase.objects()[0].crowd.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].crowd.to_xml(), encoding='utf-8')
     elif query[0] is 'context':
-        return ET.tostring(KBase.objects()[0].context.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].context.to_xml(), encoding='utf-8')
 
     print('Failed, query get ' + query[0] + ' could not be answered!')
     return 'Failed, query get ' + query[0] + ' could not be answered!'

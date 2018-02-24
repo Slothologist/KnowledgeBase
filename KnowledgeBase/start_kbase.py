@@ -32,12 +32,8 @@ path_to_config = argv[1]
 data = yaml.safe_load(open(path_to_config))
 
 db_to_use_as_blueprint_name = data['db_name']
+copy_on_startup = data['copy_on_startup']
 
-# create database connections to perm_db and working db
-me.connect(db_to_use_as_blueprint_name, alias='perm_db')
-db_run = me.connect('temp_db')
-# drop the database from the previous run
-db_run.drop_database('temp_db')
 
 
 def switch_db(to):
@@ -53,12 +49,21 @@ def switch_db(to):
             obj._collection = None
 
 
-# copy the knowledge base from permanent to temporary database
-switch_db('perm_db')
-kbase = Kbase.objects().first()
-kbase_str = minidom.parseString(ET.tostring(kbase.to_xml(), encoding='utf-8')).toprettyxml(indent="   ") # iterate once through the entire base to make sure everything is cached
-switch_db('default')
-save_complete_db(kbase)
+if copy_on_startup:
+    # create database connections to perm_db and working db
+    me.connect(db_to_use_as_blueprint_name, alias='perm_db')
+    db_run = me.connect('temp_db')
+    # drop the database from the previous run
+    db_run.drop_database('temp_db')
+
+    # copy the knowledge base from permanent to temporary database
+    switch_db('perm_db')
+    kbase = Kbase.objects().first()
+    kbase_str = ET.tostring(kbase.to_xml(), encoding='utf-8') # iterate once through the entire base to make sure everything is cached
+    switch_db('default')
+    save_complete_db(kbase)
+else:
+    me.connect(db_to_use_as_blueprint_name)
 
 
 def handle_query(req):
