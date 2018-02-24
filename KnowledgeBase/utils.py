@@ -97,3 +97,15 @@ def add_annotation(arenaobj, annotations_xml):
     annot.viewpoints = vps
     arenaobj.annotation = annot
     return arenaobj
+
+def get_class_of_bdo(bdo):
+    class_of_bdo = None
+    if bdo == 'rcobject' or bdo == 'rcobjects' or bdo == 'object' or bdo == 'objects':
+        class_of_bdo = Rcobject
+    elif bdo == 'person' or bdo == 'persons':
+        class_of_bdo = Person
+    elif bdo == 'location' or bdo == 'locations':
+        class_of_bdo = Location
+    elif bdo == 'room' or bdo == 'rooms':
+        class_of_bdo = Room
+    return class_of_bdo

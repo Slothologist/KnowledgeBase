@@ -15,7 +15,7 @@ arena_rooms = []
 arena_locations = []
 arena_doors = []
 objs = []
-pers = [] #no person list as those will be hardcoded and properly generated during runtime
+pers = []
 
 
 # load annotation file. general stuff (argument handling etc)
@@ -31,8 +31,8 @@ with open(args[1], 'r') as f:
 
 annotations = [] # list where the xml annotations will be saved
 
+#add those annotations to the list
 annotationTree = ET.fromstring(inputstr)
-
 for annotation in annotationTree.getchildren():
     if annotation.tag == 'ANNOTATION':
         annotations.append(annotation)

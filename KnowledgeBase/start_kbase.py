@@ -79,15 +79,21 @@ def handle_query(req):
         'when': qh.handle_when,
         'show': qh.handle_show
     }
+    ans = QueryResponse()
     msg = req.query.lower()
     query = msg.split(' ')
-    query = filter_fillwords(query)
+    print('DEBUG: got query ' + str(query))
     q_word = query[0]
-    if q_word not in accepted_w_word or \
-                            q_word + ' ' + query[1] in accepted_w_word:
-        return 'Failed, bad question word'
-    ans = QueryResponse()
-    ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
+    q_word2 = ' '.join(query[0:2])
+    query = filter_fillwords(query)
+    if q_word not in accepted_w_word:
+        if q_word2 in accepted_w_word:
+            print(query[2:])
+            ans.answer = accepted_w_word[q_word2](query[2:])
+        else:
+            ans.answer = 'Failed, bad question word for query: ' + msg
+    else:
+        ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
     return ans
 
 

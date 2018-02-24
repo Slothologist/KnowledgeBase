@@ -1,10 +1,18 @@
 from Classes import *
 import xml.etree.ElementTree as ET
-from utils import retrieve_object_by_identifier, deserialize_point2d
+from utils import retrieve_object_by_identifier, deserialize_point2d, get_class_of_bdo
 
 def str_to_xml(str):
     # TODO: rewrite proper
-    return '<str val= ' + str + '>'
+    return '<STRING val= ' + str + '>'
+
+
+def int_to_xml(int):
+    return '<INT val= ' + str(int) + '>'
+
+
+def float_to_xml(float):
+    return '<FLOAT val= ' + str(float) + '>'
 
 
 def handle_who(query):
@@ -15,7 +23,7 @@ def handle_who(query):
     '''
     # query is list with one element, which is a identifier for a person
     # TODO: filter wrong querries
-    pers = Person.objects(name=query[0])[0]
+    pers = retrieve_object_by_identifier(query[0])
     return ET.tostring(pers.to_xml(), encoding='utf-8')
 
 
@@ -28,7 +36,10 @@ def handle_what(query):
     # query is either list with one element ('[what] cup'), so we return a object
     # or with two elements ('[what] shape cup'), so we return the attribute of the object as string
     # TODO: filter wrong querries
-    obj = Rcobject.objects(query[-1])[0]
+    name = query[-1]
+    obj = retrieve_object_by_identifier(name)
+    if type(obj) is not Rcobject:
+        return 'Failed, did not find an object with name ' + name + ' but an ' + str(type(obj))
     if len(query) > 1:
         attr = query[0]
         ans = obj.__dict__[attr]
@@ -85,11 +96,10 @@ def handle_in_which(query):
     :return:
     '''
     # TODO: filter wrong querries
-    query = query[1:] # throw away 'which'
 
     # due to hacky programming, the elements 4+ should be joined and parsed into point2D
     point = None
-    if len(query) > 2 and query[1] is 'point':
+    if len(query) > 2 and query[1] == 'point':
         point = ' '.join(query[2:])
         point = deserialize_point2d(point)
 
@@ -105,34 +115,34 @@ def handle_in_which(query):
 
 
         elif type(entry) == Location:
-            if query[0] is 'room':
+            if query[0] == 'room':
                 return ET.tostring(entry.room.to_xml(), encoding='utf-8')
-            elif query[0] is 'location':
+            elif query[0] == 'location':
                 return ET.tostring(entry.to_xml(), encoding='utf-8')
 
 
         elif type(entry) == Room:
-            if query[0] is 'room':
+            if query[0] == 'room':
                 return ET.tostring(entry.to_xml(), encoding='utf-8')
-            elif query[0] is 'location':
+            elif query[0] == 'location':
                 print('Failed, query ' + ' '.join(query) + ' makes no sense! A room cannot be in a location.')
                 return 'Failed, a room cannot be in a location!'
 
 
         elif type(entry) == Rcobject:
-            if query[0] is 'room':
+            if query[0] == 'room':
                 return ET.tostring(entry.location.room.to_xml(), encoding='utf-8')
-            elif query[0] is 'location':
+            elif query[0] == 'location':
                 return ET.tostring(entry.location.to_xml(), encoding='utf-8')
 
     # for persons and given points we need to keep going
     ## retrieve room/ location in which this point lies
 
 
-    if query[0] is 'room':
+    if query[0] == 'room':
         for room in Room.objects(annotation__polygon__geo_intersects=point):
             return ET.tostring(room.to_xml(), encoding='utf-8')
-    elif query[0] is 'location':
+    elif query[0] == 'location':
         for loc in Location.objects(annotation__polygon__geo_intersects=point):
             return ET.tostring(loc.to_xml(), encoding='utf-8')
 
@@ -150,17 +160,14 @@ def handle_which(query):
     '''
     # TODO: filter wrong querries
     # get class of searched after elements
-    class_of_bdo = None
-    if query[1] is 'rcobject' or query[0] is 'rcobjects':
-        class_of_bdo = Rcobject
-    elif query[1] is 'person' or query[0] is 'persons':
-        class_of_bdo = Person
-    elif query[1] is 'location' or query[0] is 'locations':
-        class_of_bdo = Location
-    elif query[1] is 'room' or query[0] is 'rooms':
-        class_of_bdo = Room
+    class_of_bdo = get_class_of_bdo(query[0])
+    if not class_of_bdo:
+        return 'Failed, class ' + query[0] + ' is no viable BDO!'
     # get attribute for which the number of distinct elements shall be found
+    complex_attributes = ['room', 'location']
     attribute_of_class = query[1]
+    if attribute_of_class in complex_attributes:
+        return 'Failed, such complex attributes are not supported at this moment!'
     value = query[2]
     method_parameter_dict = {attribute_of_class : value}
     list_of_searched_bdo = class_of_bdo.objects(**method_parameter_dict)
@@ -179,23 +186,16 @@ def handle_how_many(query):
     '''
     # TODO: filter wrong querries
     # get class of searched after elements
-    class_of_bdo = None
-    if query[1] is 'rcobject' or query[1] is 'rcobjects':
-        class_of_bdo = Rcobject
-    elif query[1] is 'person' or query[1] is 'persons':
-        class_of_bdo = Person
-    elif query[1] is 'location' or query[1] is 'locations':
-        class_of_bdo = Location
-    elif query[1] is 'room' or query[1] is 'rooms':
-        class_of_bdo = Room
+    class_of_bdo = get_class_of_bdo(query[1])
     if not class_of_bdo:
         print('Failed, ' + query[1] + ' is no valid class for how many!')
         return 'Failed, ' + query[1] + ' is no valid class for how many!'
 
     # get attribute for which the number of distinct elements shall be found
+    complex_attributes = ['room', 'location']
     attribute_of_class = query[0]
-    distinct = class_of_bdo.distinct(attribute_of_class)
-    return str(len(distinct))
+    distinct = class_of_bdo.objects().distinct(attribute_of_class)
+    return int_to_xml(len(distinct))
 
 
 def handle_get(query):
@@ -206,16 +206,14 @@ def handle_get(query):
     :return:
     '''
     # TODO: filter wrong querries
-    if query[0] is 'kbase':
+    if query[0] == 'kbase':
         return ET.tostring(Kbase.objects()[0].to_xml(), encoding='utf-8')
-    elif query[0] is 'arena':
+    elif query[0] == 'arena':
         return ET.tostring(Kbase.objects()[0].arena.to_xml(), encoding='utf-8')
-    elif query[0] is 'rcobjects':
+    elif query[0] == 'rcobjects':
         return ET.tostring(Kbase.objects()[0].rcobjects.to_xml(), encoding='utf-8')
-    elif query[0] is 'crowd':
+    elif query[0] == 'crowd':
         return ET.tostring(Kbase.objects()[0].crowd.to_xml(), encoding='utf-8')
-    elif query[0] is 'context':
-        return ET.tostring(Kbase.objects()[0].context.to_xml(), encoding='utf-8')
 
     print('Failed, query get ' + query[0] + ' could not be answered!')
     return 'Failed, query get ' + query[0] + ' could not be answered!'
