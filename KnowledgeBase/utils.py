@@ -24,9 +24,10 @@ def retrieve_object_by_identifier(name):
 
 
 def deserialize_point2d(point):
+    if type(point) == unicode:
+        point = point.encode('ascii','replace')
     if type(point) == str:
         point = ET.fromstring(point)
-    print('DEBUG: deserialize Point2D: ' + ET.tostring(point, encoding='utf-8'))
     return float(point.get('x'))/point_shrinking_factor, float(point.get('y'))/point_shrinking_factor
 
 
@@ -149,7 +150,7 @@ def reduce_query(query_string, accepted_w_words):
     if '<' in query_string and '>' in query_string:
         start, end = aquire_xml_in_string(query_string)
         xml = query_string[start:end]
-        query_string = query_string[:start-1] + xml_replacement + query_string[end+1:]
+        query_string = query_string[:start] + xml_replacement + query_string[end:]
 
     # then split the query as before by ' '
     query_list = query_string.split(' ')
