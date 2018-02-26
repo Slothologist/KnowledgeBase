@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 
 point_shrinking_factor = 1000
 
+
 def retrieve_object_by_identifier(name):
     '''
 
@@ -39,6 +40,7 @@ def filter_fillwords(query):
     ret_query = [x for x in query if x not in fillwords]
     return ret_query
 
+
 def save_complete_db(kbase):
     for room in kbase.arena.rooms:
         room.save()
@@ -55,6 +57,7 @@ def save_complete_db(kbase):
     kbase.crowd.save()
     kbase.rcobjects.save()
     kbase.save()
+
 
 def add_annotation(arenaobj, annotations_xml):
     loc_type = ''
@@ -98,6 +101,7 @@ def add_annotation(arenaobj, annotations_xml):
     arenaobj.annotation = annot
     return arenaobj
 
+
 def get_class_of_bdo(bdo):
     class_of_bdo = None
     if bdo == 'rcobject' or bdo == 'rcobjects' or bdo == 'object' or bdo == 'objects':
@@ -109,6 +113,18 @@ def get_class_of_bdo(bdo):
     elif bdo == 'room' or bdo == 'rooms':
         class_of_bdo = Room
     return class_of_bdo
+
+
+def aquire_xml_in_string(string):
+    '''
+
+    :param string:
+    :return: a tuple of two ints, corresponding to the positions in the string where the xml starts and ends
+    '''
+    start = string.find('<')
+    end = string.rfind('>')+1
+    return start, end
+
 
 def reduce_query(query_string, accepted_w_words):
     query_string = query_string.lower()
@@ -127,14 +143,22 @@ def reduce_query(query_string, accepted_w_words):
     for name in names:
         query_string = query_string.replace(name, name.replace(' ', '_'))
 
+    # check for xml
+    xml_replacement = 'xml_replace'
+    xml = ''
+    if '<' in query_string and '>' in query_string:
+        start, end = aquire_xml_in_string(query_string)
+        xml = query_string[start:end]
+        query_string = query_string[:start-1] + xml_replacement + query_string[end+1:]
+
     # then split the query as before by ' '
     query_list = query_string.split(' ')
 
     # filter the fillerwords
     query_list = filter_fillwords(query_list)
 
-    # then iterate through the query and replace all '_' with ' ' again
-    query_list = [query.replace('_', ' ') for query in query_list]
+    # then iterate through the query and replace all '_' with ' ' again and 'xml_replace' with the actual xml
+    query_list = [query.replace(xml_replacement, xml).replace('_', ' ') for query in query_list]
 
     # also try not to destroy any xml which may be given
     # smarter way for future: create a sentence-metric with which you could determine the kind of question given (1) and
