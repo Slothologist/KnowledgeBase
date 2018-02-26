@@ -2,7 +2,7 @@
 
 # ros imports
 import rospy
-from KnowledgeBase.srv import *
+from knowledge_base.srv import *
 
 # database imports
 from Classes import *

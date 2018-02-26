@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name='KnowledgeBase',
+setup(name='knowledge_base',
       version='0.1.0',
       description='Simple ros database for the robocup at home league.',
       url='---none---',
