@@ -4,7 +4,7 @@ A simple Database for Ros
 ## Dependencies
 pip install mongo mongoengine
 
-...or just use pip install .
+This repository has a corresponding message file repository: https://github.com/Slothologist/KnowledgeBase_mgs
 
 ## Overview
 coming soon...

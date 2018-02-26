@@ -1,5 +1,0 @@
-#request fields
-string query
----
-#response fields
-string answer
