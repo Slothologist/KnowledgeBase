@@ -89,8 +89,13 @@ def handle_query(req):
     q_word = query[0]
     if q_word not in accepted_w_word:
         ans.answer = 'Failed, bad question word for query: ' + msg
+        ans.success = False
     else:
         ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
+        if ans.answer.startswith('Failed'):
+            ans.success = False
+        else:
+            ans.success = True
     return ans
 
 
