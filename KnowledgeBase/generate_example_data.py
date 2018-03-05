@@ -7,8 +7,6 @@ from xml.dom import minidom
 import sys
 
 
-db = me.connect('default_db')
-db.drop_database('default_db')
 
 #Lists to add your entries to
 arena_rooms = []
@@ -20,13 +18,16 @@ pers = []
 
 # load annotation file. general stuff (argument handling etc)
 args = sys.argv
-if len(args) < 2:
-    print('Usage: python generate_example_data.py <AnnotationFile>')
+if len(args) < 3:
+    print('Usage: python generate_example_data.py <DatabaseName> <AnnotationFile>')
     sys.exit()
+
+db = me.connect(args[1])
+db.drop_database(args[1])
 
 inputstr = ''
 
-with open(args[1], 'r') as f:
+with open(args[2], 'r') as f:
     inputstr = f.read()
 
 annotations = [] # list where the xml annotations will be saved
@@ -87,10 +88,8 @@ arena_doors.append(Door(roomOne=outside, roomTwo=bedroom))
 arena_doors.append(Door(roomOne=diningroom, roomTwo=outside))
 
 #Objects-Entries
-#wie mit fork, spoon and knife umgehen?
 #categorys:
 #fruit, container, food, drink, snack, cleaning stuff,
-#weitere infos folgen vmtl
 objs.append(Rcobject(name="apple",          category='fruit', color="red and green",         location=desk, shape="round", size='1'))
 objs.append(Rcobject(name="bag",            category='container', color="brown",             location=bookshelf, shape="quite flat", size='4'))
 objs.append(Rcobject(name="banana milk",    category='drink', color="blue and white",        location=kitchencounter, shape="boxy", size='1'))
@@ -153,8 +152,9 @@ kbase = Kbase(arena=arena, crowd=crowd, rcobjects=rcobjects, identifier='TestKBa
 #print(dump)
 #print(json.loads(dump, cls=ObjectDecoder).arena.locations)
 
-print('DEBUG: ')
-print(minidom.parseString(ET.tostring(kbase.to_xml(), encoding='utf-8')).toprettyxml(indent="   "))
+#print('DEBUG: toxml ')
+bla = kbase.to_xml()
+#print(minidom.parseString(ET.tostring(kbase.to_xml(), encoding='utf-8')).toprettyxml(indent="   "))
 
 save_complete_db(kbase)
 exit(0)

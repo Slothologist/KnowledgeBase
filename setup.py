@@ -9,5 +9,6 @@ setup(name='knowledge_base',
       license='---none---',
       packages=find_packages(),
       install_requires=[
-          'mongoengine',
+          'pymongo',
+          'mongoengine'
       ])

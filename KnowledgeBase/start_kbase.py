@@ -16,7 +16,8 @@ import sys
 # handlers
 import handling.query_handling as qh
 
-# mongoengine
+# pymongo and mongoengine
+import pymongo
 import mongoengine as me
 
 #utils
@@ -52,18 +53,15 @@ def switch_db(to):
 
 
 if copy_on_startup:
-    # create database connections to perm_db and working db
-    me.connect(db_to_use_as_blueprint_name, alias='perm_db')
-    db_run = me.connect('temp_db')
     # drop the database from the previous run
+    db_run = me.connect('temp_db')
     db_run.drop_database('temp_db')
+    #
+    client = pymongo.MongoClient('localhost')
+    client.admin.command('copydb',
+                              fromdb=db_to_use_as_blueprint_name,
+                              todb='temp_db')
 
-    # copy the knowledge base from permanent to temporary database
-    switch_db('perm_db')
-    kbase = Kbase.objects().first()
-    kbase_str = ET.tostring(kbase.to_xml(), encoding='utf-8') # iterate once through the entire base to make sure everything is cached
-    switch_db('default')
-    utils.save_complete_db(kbase)
 else:
     me.connect(db_to_use_as_blueprint_name)
 
@@ -109,7 +107,7 @@ def handle_data(req):
 
 
 # initialize the rosnode and services
-rospy.init_node('KnowledgeBase')
+rospy.init_node('knowledge_base')
 query_handler = rospy.Service('KBase/query', Query, handle_query)
 data_handler = rospy.Service('KBase/data', Data, handle_data)
 
