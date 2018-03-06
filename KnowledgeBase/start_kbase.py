@@ -56,7 +56,7 @@ if copy_on_startup:
     # drop the database from the previous run
     db_run = me.connect('temp_db')
     db_run.drop_database('temp_db')
-    #
+    # copy the blueprint db to the temporary database
     client = pymongo.MongoClient('localhost')
     client.admin.command('copydb',
                               fromdb=db_to_use_as_blueprint_name,

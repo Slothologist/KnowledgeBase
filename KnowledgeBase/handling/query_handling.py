@@ -8,10 +8,12 @@ def str_to_xml(str):
 
 
 def int_to_xml(int):
+    # TODO: rewrite proper
     return '<INT val= ' + str(int) + '>'
 
 
 def float_to_xml(float):
+    # TODO: rewrite proper
     return '<FLOAT val= ' + str(float) + '>'
 
 
@@ -98,19 +100,18 @@ def handle_where(query):
 
 def handle_in_which(query):
     '''
-    query is a list with 3-(4+) elements for which the second element is always either 'location' or 'room' and the
+    query is a list with 3-4 elements for which the second element is always either 'location' or 'room' and the
     third is either the keyword 'point' or a unique identifier of either a location, person, room or object. In the case
-    the third element is 'point', a Point2D in xml format should follow.
+    the third element is 'point', a Point2D in xml format should follow as the third element.
     :param query:
     :return:
     '''
     # TODO: filter wrong querries
 
-    # due to hacky programming, the elements 4+ should be joined and parsed into point2D
+    # if there is a point in the query, parse it into point2D
     point = None
     if len(query) > 2 and query[1] == 'point':
-        point = ' '.join(query[2:])
-        point = deserialize_point2d(point)
+        point = deserialize_point2d(query[2])
 
     # retrieve thingy by identifier if we dont already have a point
     if not point:
@@ -180,9 +181,20 @@ def handle_which(query):
     value = query[2]
     method_parameter_dict = {attribute_of_class : value}
     list_of_searched_bdo = class_of_bdo.objects(**method_parameter_dict)
-    ret_str = ''
+    # prepare root node for list
+    root_node = None
+    if class_of_bdo == Person:
+        root_node = ET.Element('PERSONLIST')
+    elif class_of_bdo == Rcobject:
+        root_node = ET.Element('RCOBJECTLIST')
+    elif class_of_bdo == Room:
+        root_node = ET.Element('ROOMLIST')
+    elif class_of_bdo == Location:
+        root_node = ET.Element('LOCATIONLIST')
+
     for obj in list_of_searched_bdo:
-        ret_str += ET.tostring(obj.to_xml(), encoding='utf-8')
+        root_node.append(obj.to_xml())
+    ret_str = ET.tostring(root_node, encoding='utf-8')
     ret_str = ret_str or 'Failed, could not find either the attribute or the value!'
     return ret_str
 
