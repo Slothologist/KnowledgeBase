@@ -22,6 +22,4 @@ class Rcobject(me.Document):
         attribs.pop('id')
         attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element('RCOBJECT', attrib=attribs)
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
         return root

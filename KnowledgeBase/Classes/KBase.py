@@ -13,8 +13,6 @@ class Kbase(me.Document):
 
     def to_xml(self):
         root = ET.Element('KBASE')
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
         root.append(self.crowd.to_xml())
         root.append(self.arena.to_xml())
         root.append(self.rcobjects.to_xml())

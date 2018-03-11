@@ -8,8 +8,6 @@ class Crowd(me.Document):
 
     def to_xml(self):
         root = ET.Element('CROWD')
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
         for pers in self.persons:
             root.append(pers.to_xml())
         return root

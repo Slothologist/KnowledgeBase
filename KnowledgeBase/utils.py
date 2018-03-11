@@ -1,8 +1,6 @@
 from Classes import *
 import xml.etree.ElementTree as ET
 
-point_shrinking_factor = 1000
-
 
 def retrieve_object_by_identifier(name):
     '''
@@ -21,14 +19,6 @@ def retrieve_object_by_identifier(name):
         print('Found more than one person, location, room or RCObject with name ' +
               name + ' using Person > Location > Room > RCObject')
     return all_entrys[0]
-
-
-def deserialize_point2d(point):
-    if type(point) == unicode:
-        point = point.encode('ascii','replace')
-    if type(point) == str:
-        point = ET.fromstring(point)
-    return float(point.get('x'))/point_shrinking_factor, float(point.get('y'))/point_shrinking_factor
 
 
 def filter_fillwords(query):
@@ -61,6 +51,7 @@ def save_complete_db(kbase):
 
 
 def add_annotation(arenaobj, annotations_xml):
+    #TODO: rework/refactor
     loc_type = ''
     xml_identifier = ''
     if type(arenaobj) is Room:
@@ -84,14 +75,15 @@ def add_annotation(arenaobj, annotations_xml):
                 if annotChild.tag == 'VIEWPOINT':
                     if annotChild.get('label') == 'main':
                         vp_main = True
-                    vp = Robotposition.from_xml(annotChild)
+                    vp = Viewpoint.from_xml(annotChild)
                     vps.append(vp)
                 elif annotChild.tag == 'PRECISEPOLYGON':
                     poly = True
                     points = []
                     for point2d in annotChild.getchildren():
                         if point2d.tag == 'POINT2D':
-                            points.append(list(deserialize_point2d(point2d)))
+                            point = Point2d.from_xml(point2d)
+                            points.append([point.x, point.y])
                     points.append(points[0]) #polygon needs to begin and end at same location
                     annot.polygon = [points]
             if not poly:
@@ -129,6 +121,11 @@ def aquire_xml_in_string(string):
 
 def reduce_query(query_string, accepted_w_words):
     query_string = query_string.lower()
+    # swich encoding from utf8 to ascii
+    if type(query_string) == unicode:
+        query_string = query_string.encode('ascii','replace')
+
+
     # check with which q_word the query starts and replace all of its ' ' with '_'
     for w_word in accepted_w_words:
         query_string = query_string.replace(w_word, w_word.replace(' ', '_'))

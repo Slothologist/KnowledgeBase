@@ -7,5 +7,7 @@ from Location import Location
 from Person import Person
 from RCObject import Rcobject
 from RCObjects import Rcobjects
-from RobotPosition import Robotposition
+from Viewpoint import Viewpoint
 from Room import Room
+from Positiondata import Positiondata
+from Point2d import Point2d

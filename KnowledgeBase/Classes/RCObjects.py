@@ -8,8 +8,6 @@ class Rcobjects(me.Document):
 
     def to_xml(self):
         root = ET.Element('RCOBJECTS')
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
         for ob in self.rcobjects:
             root.append(ob.to_xml())
         return root

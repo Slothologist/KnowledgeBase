@@ -1,6 +1,6 @@
 from Classes import *
 import xml.etree.ElementTree as ET
-from utils import retrieve_object_by_identifier, deserialize_point2d, get_class_of_bdo
+from utils import retrieve_object_by_identifier, get_class_of_bdo
 
 def str_to_xml(str):
     # TODO: rewrite proper
@@ -26,7 +26,7 @@ def handle_who(query):
     # query is list with one element, which is a identifier for a person
     # TODO: filter wrong querries
     pers = retrieve_object_by_identifier(query[0])
-    return ET.tostring(pers.to_xml(), encoding='utf-8')
+    return ET.tostring(pers.to_xml())
 
 
 def handle_what(query):
@@ -56,7 +56,7 @@ def handle_what(query):
             return str_to_xml(ans.name)
         return 'Failed, type of attribute ' + attr + ' is ' + str(type(ans)) +', and there is no xml-ifier for that!'
 
-    return ET.tostring(obj.to_xml(), encoding='utf-8')
+    return ET.tostring(obj.to_xml())
 
 
 def handle_where(query):
@@ -66,7 +66,7 @@ def handle_where(query):
     :return:
     '''
     # query is a list with one element, which is the unique identifier of either a location, person, room or
-    # object. It may have a second element, which would be a unique identifier for one of many robotposition/
+    # object. It may have a second element, which would be a unique identifier for one of many
     # viewpoints a location or room may have
     # TODO: filter wrong querries
     name = query[0]
@@ -83,7 +83,7 @@ def handle_where(query):
     if type(entry) == Room or type(entry) == Location:
         annot = entry.annotation
     elif type(entry) == Person:
-        return ET.tostring(entry.lastKnownPosition.to_xml(), encoding='utf-8') # persons have a position themselves
+        return ET.tostring(entry.lastKnownPosition.to_xml()) # persons have a position themselves
         #  so we do not need to go over annot
     elif type(entry) == Rcobject:
         annot = entry.location.annotation
@@ -95,7 +95,7 @@ def handle_where(query):
     else:
         viewpoint = [vp for vp in annot.viewpoints if vp.label == 'main'][0]
 
-    return ET.tostring(viewpoint.to_xml(), encoding='utf-8')
+    return ET.tostring(viewpoint.to_xml())
 
 
 def handle_in_which(query):
@@ -111,7 +111,7 @@ def handle_in_which(query):
     # if there is a point in the query, parse it into point2D
     point = None
     if len(query) > 2 and query[1] == 'point':
-        point = deserialize_point2d(query[2])
+        point = Point2d.from_xml(query[2])
 
     # retrieve thingy by identifier if we dont already have a point
     if not point:
@@ -121,19 +121,19 @@ def handle_in_which(query):
 
         # now there are 4 possibilities: we have retrieved a person (->point), location, room or object
         if type(entry) == Person:
-            point = entry.lastKnownPosition
+            point = entry.lastKnownPosition.point2d
 
 
         elif type(entry) == Location:
             if query[0] == 'room':
-                return ET.tostring(entry.room.to_xml(), encoding='utf-8')
+                return ET.tostring(entry.room.to_xml())
             elif query[0] == 'location':
-                return ET.tostring(entry.to_xml(), encoding='utf-8')
+                return ET.tostring(entry.to_xml())
 
 
         elif type(entry) == Room:
             if query[0] == 'room':
-                return ET.tostring(entry.to_xml(), encoding='utf-8')
+                return ET.tostring(entry.to_xml())
             elif query[0] == 'location':
                 print('Failed, query ' + ' '.join(query) + ' makes no sense! A room cannot be in a location.')
                 return 'Failed, a room cannot be in a location!'
@@ -141,20 +141,20 @@ def handle_in_which(query):
 
         elif type(entry) == Rcobject:
             if query[0] == 'room':
-                return ET.tostring(entry.location.room.to_xml(), encoding='utf-8')
+                return ET.tostring(entry.location.room.to_xml())
             elif query[0] == 'location':
-                return ET.tostring(entry.location.to_xml(), encoding='utf-8')
+                return ET.tostring(entry.location.to_xml())
 
     # for persons and given points we need to keep going
     ## retrieve room/ location in which this point lies
 
 
     if query[0] == 'room':
-        for room in Room.objects(annotation__polygon__geo_intersects=list(point)):
-            return ET.tostring(room.to_xml(), encoding='utf-8')
+        for room in Room.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+            return ET.tostring(room.to_xml())
     elif query[0] == 'location':
-        for loc in Location.objects(annotation__polygon__geo_intersects=list(point)):
-            return ET.tostring(loc.to_xml(), encoding='utf-8')
+        for loc in Location.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
+            return ET.tostring(loc.to_xml())
 
     print('Failed, query ' + ' '.join(query) + ' could not find a corresponding item!')
     return 'Failed, something unforseen happened, maybe the there is no room/location this point/object/location/room/person lies in'
@@ -194,7 +194,7 @@ def handle_which(query):
 
     for obj in list_of_searched_bdo:
         root_node.append(obj.to_xml())
-    ret_str = ET.tostring(root_node, encoding='utf-8')
+    ret_str = ET.tostring(root_node)
     ret_str = ret_str or 'Failed, could not find either the attribute or the value!'
     return ret_str
 
@@ -228,13 +228,13 @@ def handle_get(query):
     '''
     # TODO: filter wrong querries
     if query[0] == 'kbase':
-        return ET.tostring(Kbase.objects()[0].to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].to_xml())
     elif query[0] == 'arena':
-        return ET.tostring(Kbase.objects()[0].arena.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].arena.to_xml())
     elif query[0] == 'rcobjects':
-        return ET.tostring(Kbase.objects()[0].rcobjects.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].rcobjects.to_xml())
     elif query[0] == 'crowd':
-        return ET.tostring(Kbase.objects()[0].crowd.to_xml(), encoding='utf-8')
+        return ET.tostring(Kbase.objects()[0].crowd.to_xml())
 
     print('Failed, query get ' + query[0] + ' could not be answered!')
     return 'Failed, query get ' + query[0] + ' could not be answered!'

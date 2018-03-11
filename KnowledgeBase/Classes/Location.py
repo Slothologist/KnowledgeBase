@@ -19,6 +19,4 @@ class Location(me.Document):
         attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element('LOCATION', attrib=attribs)
         root.append(annot.to_xml())
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
         return root

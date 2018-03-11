@@ -1,5 +1,5 @@
 import mongoengine as me
-from RobotPosition import Robotposition
+from Positiondata import Positiondata
 import xml.etree.ElementTree as ET
 
 
@@ -10,7 +10,7 @@ class Person(me.Document):
     shirtcolor = me.StringField(max_length=50, default='')
     pose = me.StringField(max_length=50, default='')
     gesture = me.StringField(max_length=50, default='')
-    lastKnownPosition = me.EmbeddedDocumentField(Robotposition)
+    lastKnownPosition = me.EmbeddedDocumentField(Positiondata)
     name = me.StringField(max_length=100, default='')
     uuid = me.StringField(max_length=50, required=True, primary_key=True)
     faceId = me.IntField(default=-1)
@@ -22,9 +22,10 @@ class Person(me.Document):
         attribs = {x: str(attribs[x]) for x in attribs}
 
         root = ET.Element('PERSON', attrib=attribs)
-        gen = ET.SubElement(root, 'GENERATOR')
-        gen.text = 'unknown'
-        point = ET.SubElement(root, 'POINT2D', attrib={'scope': 'GLOBAL', 'x': str(posi.x), 'y': str(posi.y)})
-        pointgen = ET.SubElement(point, 'GENERATOR')
-        pointgen.text = 'unknown'
+        root.append(posi.to_xml())
         return root
+
+
+    @classmethod
+    def from_xml(cls):
+        pass
