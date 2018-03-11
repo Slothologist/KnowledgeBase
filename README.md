@@ -53,7 +53,7 @@ the Viewpoint with label 'main' will be used.
 * where fridge grasp_loc_1
   * Will return the viewpoint with label 'grasp_loc_1' of the location 'fridge'
 * where michael
-  * Will return the 'lastKnownPosition' of the person 'michael'
+  * Will return the 'position' of the person 'michael'
 * where cup
   * Will return the viewpoint with label 'main' of the object 'cup'
 
@@ -107,7 +107,7 @@ Location, Person, Room or RCObject. The second argument so to say must be either
   * Will return the Room in which the Location lies, in which again the RCObject with the 'name'
    attribute 'cup' is located.  
 * in which location alex
-  * Will return the Location in which the 'lastKnownPosition' of the Person with the name 'alex' 
+  * Will return the Location in which the 'position' of the Person with the name 'alex' 
   is located. Note that this may return just a String with a error message, if alex is not known 
   to be in any Location.
 * in which room point *<Point2D_xml>*

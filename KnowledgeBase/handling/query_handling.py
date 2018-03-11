@@ -83,7 +83,7 @@ def handle_where(query):
     if type(entry) == Room or type(entry) == Location:
         annot = entry.annotation
     elif type(entry) == Person:
-        return ET.tostring(entry.lastKnownPosition.to_xml()) # persons have a position themselves
+        return ET.tostring(entry.position.to_xml()) # persons have a position themselves
         #  so we do not need to go over annot
     elif type(entry) == Rcobject:
         annot = entry.location.annotation
@@ -121,7 +121,7 @@ def handle_in_which(query):
 
         # now there are 4 possibilities: we have retrieved a person (->point), location, room or object
         if type(entry) == Person:
-            point = entry.lastKnownPosition.point2d
+            point = entry.position.point2d
 
 
         elif type(entry) == Location:
