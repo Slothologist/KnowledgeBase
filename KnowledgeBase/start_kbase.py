@@ -5,8 +5,8 @@ import rospy
 from knowledge_base_msgs.srv import *
 
 # database imports
-from knowledge_base.Classes import *
-import knowledge_base.Classes
+from Classes import *
+import Classes
 import inspect
 
 # config
