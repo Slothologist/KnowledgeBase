@@ -36,28 +36,14 @@ data = yaml.safe_load(open(path_to_config))
 #initialize config parameters
 db_to_use_as_blueprint_name = data['db_name']
 copy_on_startup = data['copy_on_startup']
-
-
-
-def switch_db(to):
-    '''
-    To permanently switch databases, it is necessary to modify the class variables of the used database classes.
-    This is a shortcoming of mongoengine. For more information see https://github.com/MongoEngine/mongoengine/issues/607
-    :param to: String; Name of the database to switch to
-    :return: None
-    '''
-    for name, obj in inspect.getmembers(Classes):
-        if inspect.isclass(obj):
-            obj._meta['db_alias'] = to
-            obj._collection = None
-
+mongodb_port = int(data['mongodb_port'])
 
 if copy_on_startup:
     # drop the database from the previous run
-    db_run = me.connect('temp_db')
+    db_run = me.connect('temp_db', host="127.0.0.1", port=mongodb_port)
     db_run.drop_database('temp_db')
     # copy the blueprint db to the temporary database
-    client = pymongo.MongoClient('localhost')
+    client = pymongo.MongoClient('localhost', mongodb_port)
     client.admin.command('copydb',
                               fromdb=db_to_use_as_blueprint_name,
                               todb='temp_db')

@@ -22,7 +22,7 @@ if len(args) < 3:
     print('Usage: python generate_example_data.py <DatabaseName> <AnnotationFile>')
     sys.exit()
 
-db = me.connect(args[1])
+db = me.connect(args[1], host="127.0.0.1", port=27018)
 db.drop_database(args[1])
 
 inputstr = ''

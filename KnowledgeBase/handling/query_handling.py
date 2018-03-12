@@ -111,7 +111,7 @@ def handle_in_which(query):
     # if there is a point in the query, parse it into point2D
     point = None
     if len(query) > 2 and query[1] == 'point':
-        point = Point2d.from_xml(query[2])
+        point = Point2d.from_xml(ET.fromstring(query[2]))
 
     # retrieve thingy by identifier if we dont already have a point
     if not point:
