@@ -81,7 +81,7 @@ include_directories(
 # )
 
 CATKIN_INSTALL_PYTHON(PROGRAMS
-  start_kbase.py
+  KnowledgeBase/start_kbase.py
   DESTINATION
   ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
