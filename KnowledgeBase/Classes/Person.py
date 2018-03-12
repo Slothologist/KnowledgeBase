@@ -25,7 +25,7 @@ class Person(me.Document):
         attribs['age'] = str(aF) + '-' + str(aT)
         attribs = {x: str(attribs[x]) for x in attribs}
 
-        root = ET.Element('PERSON', attrib=attribs)
+        root = ET.Element('PERSONDATA', attrib=attribs)
         root.append(posi.to_xml())
         return root
 

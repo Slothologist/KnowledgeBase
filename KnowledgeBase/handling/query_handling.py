@@ -184,7 +184,7 @@ def handle_which(query):
     # prepare root node for list
     root_node = None
     if class_of_bdo == Person:
-        root_node = ET.Element('PERSONLIST')
+        root_node = ET.Element('PERSONDATALIST')
     elif class_of_bdo == Rcobject:
         root_node = ET.Element('RCOBJECTLIST')
     elif class_of_bdo == Room:
