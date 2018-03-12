@@ -130,8 +130,26 @@ objs.append(Rcobject(name="white bowl",     category='container', color="white",
 
 #Crowd-entries
 #dummys, overwritten by reportGroup
-pers.append(Person(name='michael', uuid='1', agefrom='3', ageto='5', gender="male", gesture="pointing", pose="sitting", shirtcolor="blue", position=Viewpoint(x=1.2, y=3.4, label='bla', theta=4.6), faceid=-1))
-pers.append(Person(name='noah', uuid='0', agefrom='3', ageto='5', gender="female", gesture="waving", pose="standing", shirtcolor="green", position=Viewpoint(x=5.6, y=7.8, label='bla2', theta=6.4), faceid=-1))
+pers.append(Person(name='michael',
+                   uuid='1',
+                   agefrom='3',
+                   ageto='5',
+                   gender="male",
+                   gesture="pointing",
+                   posture="sitting",
+                   shirtcolor="blue",
+                   faceid=-1,
+                   position=Positiondata(theta=1.1, frameid="map", point2d=Point2d(x=1.2, y=3.4))))
+pers.append(Person(name='noah',
+                   uuid='0',
+                   agefrom='3',
+                   ageto='5',
+                   gender="female",
+                   gesture="waving",
+                   posture="standing",
+                   shirtcolor="green",
+                   faceid=-1,
+                   position=Positiondata(theta=1.9, frameid="map", point2d=Point2d(x=5.6, y=7.8))))
 
 ######################################################################################################################
 

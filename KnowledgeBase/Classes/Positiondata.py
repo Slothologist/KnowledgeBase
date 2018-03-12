@@ -20,7 +20,7 @@ class Positiondata(me.EmbeddedDocument):
     def from_xml(cls, xml_tree):
         posi = Positiondata()
         posi.frameid = xml_tree.get('frameid')
-        posi.theta = xml_tree.get('theta')
+        posi.theta = float(xml_tree.get('theta'))
         for potential_poi in xml_tree.getchildren():
             if potential_poi.tag == Point2d.get_tag():
                 posi.point2d = Point2d.from_xml(potential_poi)
