@@ -51,7 +51,6 @@ def save_complete_db(kbase):
 
 
 def add_annotation(arenaobj, annotations_xml):
-    #TODO: rework/refactor
     loc_type = ''
     xml_identifier = ''
     if type(arenaobj) is Room:
