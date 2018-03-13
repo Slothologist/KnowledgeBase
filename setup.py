@@ -11,7 +11,6 @@ setup_args = generate_distutils_setup(
     author='rfeldhans',
     author_email='rfeldhans@techfak.uni-bielefeld.de',
     license='---none---',
-    packages=find_packages(),
-    package_dir={'': 'src'})
+    packages=find_packages())
 
 setup(**setup_args)
