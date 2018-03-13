@@ -82,10 +82,6 @@ arena_locations.append(bed)
 arena_locations.append(sidetable)
 
 outside = Room(name='outside', numberOfDoors='0')
-arena_rooms.append(outside)#if you have doors to the outside it would make sense to also annotate an extra room for the outside
-
-arena_doors.append(Door(roomOne=outside, roomTwo=bedroom))
-arena_doors.append(Door(roomOne=diningroom, roomTwo=outside))
 
 #Objects-Entries
 #categorys:
