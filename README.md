@@ -2,7 +2,11 @@
 A simple Database for Ros
 
 ## Dependencies
-pip install mongo mongoengine
+- python
+  - pymongo 
+  - mongoengine
+- distibution
+  - mongodb
 
 This repository has a corresponding message file repository: https://github.com/Slothologist/KnowledgeBase_mgs
 
@@ -15,11 +19,16 @@ given as additional paramenter.
 
 ### Physical location of the database
 MongoDB's default saving location is under /var/lib/mongodb. This can be changed in the
-/etc/mongod.conf. 
+/etc/mongod.conf or by starting the mongo daemon with the --dbpath or --config parameters.
 
 ### Pipeline for creating a new KnowledgeBase
 
-coming soon...
+1. create a new annotation file (with the clf map annotation tool)
+1. edit the generate_example_data.py file to fit your needs (objects, location & rooms, persons, etc.)
+1. parse this annotation file to the new btl format using the map_annotation_tool_to_btl_converter.py
+1. start a mongo deamon where the dbpath is the KnowledgeBase/bases directory (and the port matches the port specified in generate_example_data.py)
+1. use the generate_example_data.py script to write into mongodb
+1. terminate the mongo deamon and push your changes
 
 ## Database Schema
 coming soon...
