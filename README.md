@@ -140,3 +140,15 @@ The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 ### Saving new Data
 coming soon...
 
+#### Remember
+
+##### Examples
+
+#### Forget
+
+##### Examples
+
+#### Clear
+
+##### Examples
+
