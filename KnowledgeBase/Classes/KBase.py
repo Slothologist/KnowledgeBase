@@ -16,4 +16,10 @@ class Kbase(me.Document):
         root.append(self.crowd.to_xml())
         root.append(self.arena.to_xml())
         root.append(self.rcobjects.to_xml())
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root

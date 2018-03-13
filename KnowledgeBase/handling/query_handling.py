@@ -194,6 +194,14 @@ def handle_which(query):
 
     for obj in list_of_searched_bdo:
         root_node.append(obj.to_xml())
+
+
+    gen = ET.SubElement(root_node, 'GENERATOR')
+    gen.text = 'Kbase'
+    time = ET.SubElement(root_node, 'TIMESTAMP')
+    inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+    updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
+
     ret_str = ET.tostring(root_node)
     ret_str = ret_str or 'Failed, could not find either the attribute or the value!'
     return ret_str

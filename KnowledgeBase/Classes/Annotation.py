@@ -28,8 +28,20 @@ class Annotation(me.EmbeddedDocument):
                     poi = Point2d(x=point[0],
                                   y=point[1])
                     poly.append(poi.to_xml())
+
+            gen = ET.SubElement(poly, 'GENERATOR')
+            gen.text = 'Kbase'
+            time = ET.SubElement(poly, 'TIMESTAMP')
+            inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+            updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         else:
             print('Warning: Annotation with label \"' + attribs['label'] + '\" has no PrecisePolygon')
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
 
     @classmethod

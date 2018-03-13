@@ -15,4 +15,10 @@ class Door(me.Document):
         attribs.pop('id')
         root = ET.Element('DOOR', attrib={'roomOne':attribs['roomOne'].name, 'roomTwo':attribs['roomTwo'].name})
         root.append(annot.to_xml())
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root

@@ -12,6 +12,12 @@ class Viewpoint(me.EmbeddedDocument):
         posi = attribs.pop('positiondata')
         root = ET.Element('VIEWPOINT', attrib=attribs)
         root.append(posi.to_xml())
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
 
 
