@@ -12,8 +12,7 @@ setup_args = generate_distutils_setup(
     author_email='rfeldhans@techfak.uni-bielefeld.de',
     license='---none---',
     install_requires=[
-        'xml.dom',
-        'xml.etree',
+        'xml',
         'pymongo',
         'mongoengine'
       ],
