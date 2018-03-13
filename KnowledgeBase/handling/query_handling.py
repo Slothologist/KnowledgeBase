@@ -239,13 +239,15 @@ def handle_get(query):
         return ET.tostring(Kbase.objects()[0].to_xml())
     elif query[0] == 'arena':
         return ET.tostring(Kbase.objects()[0].arena.to_xml())
-    elif query[0] == 'rcobjects':
+    elif query[0] == 'rcobjects' or query[0] == 'objects':
         return ET.tostring(Kbase.objects()[0].rcobjects.to_xml())
     elif query[0] == 'crowd':
         return ET.tostring(Kbase.objects()[0].crowd.to_xml())
 
-    print('Failed, query get ' + query[0] + ' could not be answered!')
-    return 'Failed, query get ' + query[0] + ' could not be answered!'
+    error_str = 'Failed, query get ' + query[0] + ' could not be answered! Please ask for kbase, arena, (rc)objects or crowd!'
+
+    print(error_str)
+    return error_str
 
 #################### low prio:
 

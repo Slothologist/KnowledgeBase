@@ -17,6 +17,10 @@ given as additional paramenter.
 MongoDB's default saving location is under /var/lib/mongodb. This can be changed in the
 /etc/mongod.conf. 
 
+### Pipeline for creating a new KnowledgeBase
+
+coming soon...
+
 ## Database Schema
 coming soon...
 
