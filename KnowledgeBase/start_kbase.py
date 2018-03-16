@@ -4,17 +4,13 @@
 import rospy
 from knowledge_base_msgs.srv import *
 
-# database imports
-from Classes import *
-import Classes
-import inspect
-
 # config
 import yaml
 import sys
 
 # handlers
 import handling.query_handling as qh
+import handling.data_handling as dh
 
 # pymongo and mongoengine
 import pymongo
@@ -22,7 +18,6 @@ import mongoengine as me
 
 #utils
 import utils
-import xml.etree.ElementTree as ET
 
 
 # initialize database node by loading config file
@@ -62,6 +57,7 @@ def handle_query(req):
         'how many': qh.handle_how_many,
         'get': qh.handle_get,
 
+        # unsupported at this point
         'when': qh.handle_when,
         'show': qh.handle_show
     }
@@ -71,23 +67,29 @@ def handle_query(req):
     query = utils.reduce_query(msg, accepted_w_word)
     print('DEBUG: reduced query ' + str(query))
     q_word = query[0]
-    if q_word not in accepted_w_word:
+    if q_word in accepted_w_word:
+        processed_query = accepted_w_word[q_word](query[1:])
+        ans.answer = processed_query[0] or 'Failed, unknown error!'
+        ans.error_code = processed_query[1]
+        ans.success = not ans.error_code
+    else:
         ans.answer = 'Failed, bad question word for query: ' + msg
         ans.success = False
-    else:
-        ans.answer = accepted_w_word[q_word](query[1:]) or 'Failed'
-        if ans.answer.startswith('Failed'):
-            ans.success = False
-        else:
-            ans.success = True
+        ans.error_code = 0
     return ans
 
 
 
 def handle_data(req):
+    accepted_d_word = {
+        'remember': dh.handle_remember,
+        'forget': dh.handle_forget
+    }
+    ans = DataResponse()
+    cmd = req.command.lower()
+
     success = True
     print('command: ' + req.command + '; object: ' + req.object)
-    ans = DataResponse()
     ans.success = success
     return ans
 

@@ -11,13 +11,14 @@ def retrieve_object_by_identifier(name):
     all_entrys = list(Person.objects(name=name)) + \
                  list(Location.objects(name=name)) + \
                  list(Room.objects(name=name)) + \
-                 list(Rcobject.objects(name=name))
+                 list(Rcobject.objects(name=name)) + \
+                 list(Person.objects(uuid=name))
     if len(all_entrys) < 1:
         print('Failed! Found no person, location, room or RCObject with name ' + name)
         return None
     if len(all_entrys) > 1:
         print('Found more than one person, location, room or RCObject with name ' +
-              name + ' using Person > Location > Room > RCObject')
+              name + ' using Person > Location > Room > RCObject > Person.uuid')
     return all_entrys[0]
 
 

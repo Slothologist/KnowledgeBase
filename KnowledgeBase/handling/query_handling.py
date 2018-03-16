@@ -25,8 +25,14 @@ def handle_who(query):
     '''
     # query is list with one element, which is a identifier for a person
     # TODO: filter wrong querries
-    pers = retrieve_object_by_identifier(query[0])
-    return ET.tostring(pers.to_xml())
+    name = query[0]
+    pers = retrieve_object_by_identifier(name)
+    if type(pers) is not Person:
+        if pers is None:
+            return 'Failed, did not find a Person with name ' + name, 61
+        else:
+            return 'Failed, did not find a Person with name ' + name + ' but an ' + str(type(pers)), 62
+    return ET.tostring(pers.to_xml()), 0
 
 
 def handle_what(query):
@@ -41,7 +47,10 @@ def handle_what(query):
     name = query[-1]
     obj = retrieve_object_by_identifier(name)
     if type(obj) is not Rcobject:
-        return 'Failed, did not find an object with name ' + name + ' but an ' + str(type(obj))
+        if obj is None:
+            return 'Failed, did not find an object with name ' + name, 11
+        else:
+            return 'Failed, did not find an object with name ' + name + ' but an ' + str(type(obj)), 12
     if len(query) > 1:
         attr = query[0]
         attribs = {x: obj.__getattribute__(x) for x in obj._fields}
@@ -54,9 +63,9 @@ def handle_what(query):
             return str_to_xml(ans.encode('ascii','replace'))
         elif type(ans) == Location:
             return str_to_xml(ans.name)
-        return 'Failed, type of attribute ' + attr + ' is ' + str(type(ans)) +', and there is no xml-ifier for that!'
+        return 'Failed, type of attribute ' + attr + ' is ' + str(type(ans)) +', and there is no xml-ifier for that!', 13
 
-    return ET.tostring(obj.to_xml())
+    return ET.tostring(obj.to_xml()), 0
 
 
 def handle_where(query):
@@ -76,14 +85,14 @@ def handle_where(query):
     entry = retrieve_object_by_identifier(name)
 
     if not entry:
-        return 'Failed! Found no person, location, room or RCObject with name ' + name
+        return 'Failed! Found no person, location, room or RCObject with name ' + name, 21
 
     # retrieve annotation of the fetched thingy
     annot = None
     if type(entry) == Room or type(entry) == Location:
         annot = entry.annotation
     elif type(entry) == Person:
-        return ET.tostring(entry.position.to_xml()) # persons have a position themselves
+        return ET.tostring(entry.position.to_xml()), 0 # persons have a position themselves
         #  so we do not need to go over annot
     elif type(entry) == Rcobject:
         annot = entry.location.annotation
@@ -95,7 +104,7 @@ def handle_where(query):
     else:
         viewpoint = [vp for vp in annot.viewpoints if vp.label == 'main'][0]
 
-    return ET.tostring(viewpoint.to_xml())
+    return ET.tostring(viewpoint.to_xml()), 0
 
 
 def handle_in_which(query):
@@ -117,7 +126,7 @@ def handle_in_which(query):
     if not point:
         entry = retrieve_object_by_identifier(query[1])
         if not entry:
-            return 'Failed! Found no person, location, room or RCObject with name ' + query[1]
+            return 'Failed! Found no person, location, room or RCObject with name ' + query[1], 31
 
         # now there are 4 possibilities: we have retrieved a person (->point), location, room or object
         if type(entry) == Person:
@@ -126,24 +135,24 @@ def handle_in_which(query):
 
         elif type(entry) == Location:
             if query[0] == 'room':
-                return ET.tostring(entry.room.to_xml())
+                return ET.tostring(entry.room.to_xml()), 0
             elif query[0] == 'location':
-                return ET.tostring(entry.to_xml())
+                return ET.tostring(entry.to_xml()), 0
 
 
         elif type(entry) == Room:
             if query[0] == 'room':
-                return ET.tostring(entry.to_xml())
+                return ET.tostring(entry.to_xml()), 0
             elif query[0] == 'location':
                 print('Failed, query ' + ' '.join(query) + ' makes no sense! A room cannot be in a location.')
-                return 'Failed, a room cannot be in a location!'
+                return 'Failed, a room cannot be in a location!', 32
 
 
         elif type(entry) == Rcobject:
             if query[0] == 'room':
-                return ET.tostring(entry.location.room.to_xml())
+                return ET.tostring(entry.location.room.to_xml()), 0
             elif query[0] == 'location':
-                return ET.tostring(entry.location.to_xml())
+                return ET.tostring(entry.location.to_xml()), 0
 
     # for persons and given points we need to keep going
     ## retrieve room/ location in which this point lies
@@ -151,13 +160,13 @@ def handle_in_which(query):
 
     if query[0] == 'room':
         for room in Room.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
-            return ET.tostring(room.to_xml())
+            return ET.tostring(room.to_xml()), 0
     elif query[0] == 'location':
         for loc in Location.objects(annotation__polygon__geo_intersects=[point.x, point.y]):
-            return ET.tostring(loc.to_xml())
+            return ET.tostring(loc.to_xml()), 0
 
     print('Failed, query ' + ' '.join(query) + ' could not find a corresponding item!')
-    return 'Failed, something unforseen happened, maybe the there is no room/location this point/object/location/room/person lies in'
+    return 'Failed, something unforseen happened, maybe the there is no room/location this point/object/location/room/person lies in', 33
 
 
 def handle_which(query):
@@ -172,12 +181,12 @@ def handle_which(query):
     # get class of searched after elements
     class_of_bdo = get_class_of_bdo(query[0])
     if not class_of_bdo:
-        return 'Failed, class ' + query[0] + ' is no viable BDO!'
+        return 'Failed, class ' + query[0] + ' is no viable BDO!', 41
     # get attribute for which the number of distinct elements shall be found
     complex_attributes = ['room', 'location']
     attribute_of_class = query[1]
     if attribute_of_class in complex_attributes:
-        return 'Failed, such complex attributes are not supported at this moment!'
+        return 'Failed, such complex attributes are not supported at this moment!', 42
     value = query[2]
     method_parameter_dict = {attribute_of_class : value}
     list_of_searched_bdo = class_of_bdo.objects(**method_parameter_dict)
@@ -195,7 +204,7 @@ def handle_which(query):
     for obj in list_of_searched_bdo:
         root_node.append(obj.to_xml())
 
-
+    # Generator stuff for btl-xml...
     gen = ET.SubElement(root_node, 'GENERATOR')
     gen.text = 'Kbase'
     time = ET.SubElement(root_node, 'TIMESTAMP')
@@ -203,8 +212,8 @@ def handle_which(query):
     updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
 
     ret_str = ET.tostring(root_node)
-    ret_str = ret_str or 'Failed, could not find either the attribute or the value!'
-    return ret_str
+    return ret_str, 0
+
 
 def handle_how_many(query):
     '''
@@ -218,13 +227,12 @@ def handle_how_many(query):
     class_of_bdo = get_class_of_bdo(query[1])
     if not class_of_bdo:
         print('Failed, ' + query[1] + ' is no valid class for how many!')
-        return 'Failed, ' + query[1] + ' is no valid class for how many!'
+        return 'Failed, ' + query[1] + ' is no valid class for how many!', 51
 
     # get attribute for which the number of distinct elements shall be found
-    complex_attributes = ['room', 'location']
     attribute_of_class = query[0]
     distinct = class_of_bdo.objects().distinct(attribute_of_class)
-    return int_to_xml(len(distinct))
+    return int_to_xml(len(distinct)), 0
 
 
 def handle_get(query):
@@ -236,18 +244,18 @@ def handle_get(query):
     '''
     # TODO: filter wrong querries
     if query[0] == 'kbase':
-        return ET.tostring(Kbase.objects()[0].to_xml())
+        return ET.tostring(Kbase.objects()[0].to_xml()), 0
     elif query[0] == 'arena':
-        return ET.tostring(Kbase.objects()[0].arena.to_xml())
+        return ET.tostring(Kbase.objects()[0].arena.to_xml()), 0
     elif query[0] == 'rcobjects' or query[0] == 'objects':
-        return ET.tostring(Kbase.objects()[0].rcobjects.to_xml())
+        return ET.tostring(Kbase.objects()[0].rcobjects.to_xml()), 0
     elif query[0] == 'crowd':
-        return ET.tostring(Kbase.objects()[0].crowd.to_xml())
+        return ET.tostring(Kbase.objects()[0].crowd.to_xml()), 0
 
     error_str = 'Failed, query get ' + query[0] + ' could not be answered! Please ask for kbase, arena, (rc)objects or crowd!'
 
     print(error_str)
-    return error_str
+    return error_str, 71
 
 #################### low prio:
 

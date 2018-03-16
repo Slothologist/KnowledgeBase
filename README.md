@@ -26,7 +26,8 @@ MongoDB's default saving location is under /var/lib/mongodb. This can be changed
 1. create a new annotation file (with the clf map annotation tool)
 1. edit the generate_example_data.py file to fit your needs (objects, location & rooms, persons, etc.)
 1. parse this annotation file to the new btl format using the map_annotation_tool_to_btl_converter.py
-1. start a mongo deamon where the dbpath is the KnowledgeBase/bases directory (and the port matches the port specified in generate_example_data.py)
+1. start a mongo deamon where the dbpath is the directory in which you want to save your databases (and the port matches the port specified in generate_example_data.py)
+   1. Caution: Mongodb creates journal files by default which are quite big, used for storing history. You may not want to copy them.
 1. use the generate_example_data.py script to write into mongodb
 1. terminate the mongo deamon and push your changes
 
@@ -165,3 +166,55 @@ coming soon...
 
 ##### Examples
 
+## Error Codes
+Error codes are valid if and only if the success field in the Service answers is false.
+
+### Query
+
+#### 0
+The question word was not in the list of accepted or supported question words.
+
+#### Starting with 1: What queries
+ - 11
+   - There is no Object with the specified name.
+ - 12
+   - There is a BDO with the specified name but it is no Object.
+ - 13
+   - The type of the requested variable of the object is not xml-ifieable and could thus not send back.
+
+#### Starting with 2: Where queries
+ - 21
+   - The name of the BDO provided by the query could not be found.
+
+#### Starting with 3: In which queries
+ - 31
+   - The name of the BDO provided by the query could not be found.
+ - 32
+   - You asked in which Location a specific Room lies, which makes no real sense. In the Knowledgebases world, rooms do not lie in locations but the other way round.
+ - 33
+   - Something unforseen happened. Maybe the BDO/ Point specified by the query does not lie in any room/ location.
+
+#### Starting with 4: Which queries
+ - 41
+   - The name of the class of BDO is not viable.
+ - 42
+   - The attribute specified by the query is not supported to be returned yet.
+
+#### Starting with 5: How many queries
+ - 51
+   - The name of the class of BDO is not viable.
+   
+#### Starting with 6: Who queries
+ - 61
+   - There is no Person with the specified name or uuid.
+ - 62
+   - There is a BDO with the specified name but it is no Person.
+
+#### Starting with 7: Get queries
+ - 71
+   - The name of the requested Class is not viable.
+
+### Data
+
+#### 0
+The data storage word was not in the list of accepted or supported data storage words.
