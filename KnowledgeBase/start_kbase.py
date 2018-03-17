@@ -33,6 +33,8 @@ db_to_use_as_blueprint_name = data['db_name']
 copy_on_startup = data['copy_on_startup']
 mongodb_port = int(data['mongodb_port'])
 
+print('Trying to connect to mongod...')
+
 if copy_on_startup:
     # drop the database from the previous run
     db_run = me.connect('temp_db', host="127.0.0.1", port=mongodb_port)
@@ -45,6 +47,8 @@ if copy_on_startup:
 
 else:
     me.connect(db_to_use_as_blueprint_name)
+
+print('Connected!')
 
 
 def handle_query(req):
@@ -106,4 +110,5 @@ rospy.init_node('knowledge_base')
 query_handler = rospy.Service('KBase/query', Query, handle_query)
 data_handler = rospy.Service('KBase/data', Data, handle_data)
 
+print('KBase ready!')
 rospy.spin()
