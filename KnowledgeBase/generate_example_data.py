@@ -38,6 +38,15 @@ for annotation in annotationTree.getchildren():
     if annotation.tag == 'ANNOTATION':
         annotations.append(annotation)
 
+# check input for sanity
+bdo_names = []
+for anno in annotations:
+    anno_name = anno.get('label').split(':')[1]
+    if anno_name in bdo_names:
+        print('Annotation \"' + anno_name + '\" seems to appear at least two times! Exiting now!')
+        exit(1)
+    bdo_names.append(anno_name)
+
 ##################################################################################################################################################################
 
 ##Data which shall be put into the database
@@ -122,6 +131,17 @@ pers.append(Person(name='noah',
                    position=Positiondata(theta=1.9, frameid="map", point2d=Point2d(x=5.6, y=7.8))))
 
 ######################################################################################################################
+
+# another check or sanity, this time for objects
+object_names = []
+for obj in objs:
+    if obj.name in object_names:
+        print('Object \"' + obj.name + '\" seems to appear at least two times! Exiting now!')
+        exit(1)
+    if obj.name in bdo_names:
+        print('Object \"' + obj.name + '\" seems to be also a room-, location- or door-name! Exiting now!')
+        exit(1)
+
 
 #match read annotations to rooms, locations and doors
 
