@@ -89,8 +89,15 @@ def handle_data(req):
     cmd = req.command.lower()
 
     success = True
-    print('command: ' + req.command + '; object: ' + req.object)
-    ans.success = success
+    print('DEBUG: got command: ' + req.command)
+    cmd = utils.reduce_query(cmd, accepted_d_word)
+    print('DEBUG: reduced query ' + str(cmd))
+    d_word = cmd[0]
+    if d_word in accepted_d_word:
+        ans.success, ans.error_code = accepted_d_word[d_word](cmd[1:])
+    else:
+        ans.success = False
+        ans.error_code = 0
     return ans
 
 

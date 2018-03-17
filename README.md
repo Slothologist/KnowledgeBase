@@ -11,15 +11,14 @@ A simple Database for Ros
 This repository has a corresponding message file repository: https://github.com/Slothologist/KnowledgeBase_mgs
 
 ## Overview
-coming soon...
 
 ### Starting the rosnode
 Use the launchfile contained in the launch folder. A config file for the KBasenode must be
-given as additional paramenter. 
+given as additional paramenter. You will find one in the useful_files folder.
 
 ### Physical location of the database
 MongoDB's default saving location is under /var/lib/mongodb. This can be changed in the
-/etc/mongod.conf or by starting the mongo daemon with the --dbpath or --config parameters.
+/etc/mongod.conf or by starting a mongo daemon with the --dbpath or --config parameters.
 
 ### Pipeline for creating a new KnowledgeBase
 
@@ -37,7 +36,10 @@ coming soon...
 ## Services
 The Node realises queries as Ros Servicecalls. The main call for queries is under the topic 
 /KBase/query, accepts a query in string form and returns one or more database objects in xml 
-form. 
+form. The secondary call is found under /KBase/data, accepts a command and return a success 
+boolean and an error code.
+
+## Queries
 
 Queries are accepted in a form inspired by native human speech. Each query starts with a question
 word, e.g. where, who, what, which, when. This word defines the type of the return value.
@@ -51,10 +53,8 @@ This makes theses queries valid:
 * in which room is the cup
 * how many category have the rcobjects
 
-### Queries
 
-
-#### Where
+### Where
 Will return a Viewpoint corresponding to a given identifier. 'Where' queries shall be of the form 
 'where *unique_identifier* [*viewpoint_label*]'. The *unique identifier* can be of either a 
 Location, Person, Room or RCObject. The optional *viewpoint label* can be specified to retrieve a 
@@ -72,7 +72,7 @@ the Viewpoint with label 'main' will be used.
   * Will return the viewpoint with label 'main' of the object 'cup'
 
 
-#### What
+### What
 Will return a RCObject (or String). 'What' queries shall be of the form 'what [*attribute_name*]
 *unique_identifier*'. The *unique identifier* shall be the 'name' of a RCObject. The optional 
 *attribute name* can be specified to retrieve (instead of the complete RCObject) the value of a
@@ -86,7 +86,7 @@ specific attribute of the RCObject specified by the *unique identifier* as a Str
 * what color apple
   * Will return a string which is the 'color' of the RCObject with name 'apple'
 
-#### Which
+### Which
 Will return a List of basic database objects (BDO, i.e. Person, Location, Room, Door, RCObject)
 where a given attribute has a given value. 'Which' queries shall be of the form 'which *BDO* 
 *attribute* *value*'. The *BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
@@ -102,15 +102,16 @@ given *attribute*.
 * which person gender female
   * Will return a List of Person. Every Persons 'gender' attribute will have the value 'female'.
 
-#### Who
-will return a Person corresponding to a given identifier. 'Who' queries shall be of the form 'who
-*unique_identifier*. The *unique identifier* shall be the 'name' of a Person.
+### Who
+will return a Person or List of Persons corresponding to a given identifier. 'Who' queries shall 
+be of the form 'who *unique_identifier*. The *unique identifier* shall be the 'name' or 'uuid' of
+a Person. 
 
 ##### Examples
 * who peter
   * Will return the Person with the 'name' attributes value being 'peter' 
  
-#### In which
+### In which
 Will return either a Location or a Room. 'In which' queries shall be of the form 'in which
 ('Location' | 'Room') *unique_identifier*'. The *unique identifier* can be of either a 
 Location, Person, Room or RCObject. The second argument so to say must be either 'Location' or 
@@ -126,7 +127,7 @@ Location, Person, Room or RCObject. The second argument so to say must be either
   to be in any Location.
 * in which room point *<Point2D_xml>*
 
-#### How many
+### How many
 Will return a int corresponding to the number of distinct occurences a specified attribute has
 in a BDO. 'How many' queries shall be of the form 'how many *attribute* *BDO*'. The 
 *BDO* must be either 'Location', 'Person', 'Room' or 'RCObject'. The 
@@ -141,7 +142,7 @@ in a BDO. 'How many' queries shall be of the form 'how many *attribute* *BDO*'. 
   known Person instances have. Because in this case 'name' is the unique identifier, this querry 
   will return the number of distinct Persons.
 
-#### Get
+### Get
 With get you can retrieve a non basic data object. 'Get' queries shall be of the form 'get *NBDO*'.
 The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 
@@ -151,20 +152,30 @@ The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 * get ARENA
   * Will return the entire Arena, with all Locations, Rooms and Doors as Arena object.
 
-### Saving new Data
-coming soon...
+## Saving new Data or deleting it
+Thee are realised by the /KBase/data rosservice call. Each command given over it starts with a 
+command word, i.e. remember or forget. As well as the queries of the query call the commands are 
+designed to somehow resemble human speech. As objects are transmitted via xml, this is somewhat 
+lackluster, especially for remember. 
 
-#### Remember
+Commands can also be enhanced with filler words, see above.
 
-##### Examples
-
-#### Forget
-
-##### Examples
-
-#### Clear
+### Remember
 
 ##### Examples
+
+### Forget
+Will delete a BDO from the KBase. 'Forget' commands shall be of the form 'forget 
+*unique_identifier*'. The *unique identifier* can be of either a Location, Person, Room or 
+RCObject. Another form, added for convieniance is 'forget all *BDO*'. The *BDO* 
+must be either 'Location', 'Person', 'Room' or 'RCObject' (Plurals are allowed as well).
+It deletes every BDO of the given type.
+
+##### Examples
+* forget michael
+  * Will delete the Person with name Michael from the database
+* forget all the locations
+  * will delete all Locations from the database
 
 ## Error Codes
 Error codes are valid if and only if the success field in the Service answers is false.
@@ -218,3 +229,13 @@ The question word was not in the list of accepted or supported question words.
 
 #### 0
 The data storage word was not in the list of accepted or supported data storage words.
+
+#### Starting with 1: Forget queries
+ - 11
+   - Command was ill formatted. There was more than tree elements and the second one was not 'all'
+ - 12
+   - The specified class of which all objects should be deleted is not allowed or supported.
+ - 13
+   - There was no BDO with the specified identifier to be deleted.
+   
+#### Starting with 2: Remember queries
