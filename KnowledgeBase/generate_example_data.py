@@ -54,13 +54,13 @@ for anno in annotations:
 
 #Arena-entries (locations, rooms etc)
 #<N_placementTwo> = (dinner table) | cabinet | bookshelf | (kitchen counter) | sofa | (couch table) | (side table) | (stove) | bed | closet | desk | bar;
-kitchen = Room(name='kitchen', numberOfDoors='1')
-fridge = Location(name='fridge', room=kitchen, isBeacon='True')
-kitchencounter = Location(name='kitchencounter', room=kitchen, isBeacon='True')
-bar = Location(name='bar', room=kitchen, isBeacon='True')
-cabinet = Location(name='cabinet', room=kitchen, isBeacon='True')
-sink = Location(name='sink', room=kitchen, isBeacon='True')
-stove = Location(name='stove', room=kitchen, isBeacon='True')
+kitchen = Room(name='kitchen', numberofdoors='1')
+fridge = Location(name='fridge', room=kitchen, isbeacon='True')
+kitchencounter = Location(name='kitchencounter', room=kitchen, isbeacon='True')
+bar = Location(name='bar', room=kitchen, isbeacon='True')
+cabinet = Location(name='cabinet', room=kitchen, isbeacon='True')
+sink = Location(name='sink', room=kitchen, isbeacon='True')
+stove = Location(name='stove', room=kitchen, isbeacon='True')
 arena_rooms.append(kitchen)
 arena_locations.append(fridge)
 arena_locations.append(kitchencounter)
@@ -69,7 +69,7 @@ arena_locations.append(cabinet)
 arena_locations.append(sink)
 arena_locations.append(stove)
 
-livingroom = Room(name='livingroom', numberOfDoors='0')
+livingroom = Room(name='livingroom', numberofdoors='0')
 livingtable = Location(name='livingtable', room=livingroom)
 sofa = Location(name='sofa', room=livingroom)
 comfychair = Location(name='comfychair', room=livingroom)
@@ -78,13 +78,13 @@ arena_locations.append(livingtable)
 arena_locations.append(sofa)
 arena_locations.append(comfychair)
 
-corridor = Room(name='corridor', numberOfDoors='3')
+corridor = Room(name='corridor', numberofdoors='3')
 arena_rooms.append(corridor)
 
-bathroom = Room(name='bathroom', numberOfDoors='1')
+bathroom = Room(name='bathroom', numberofdoors='1')
 arena_rooms.append(bathroom)
 
-outside = Room(name='outside', numberOfDoors='0')
+outside = Room(name='outside', numberofdoors='0')
 
 #Objects-Entries
 #categorys:
