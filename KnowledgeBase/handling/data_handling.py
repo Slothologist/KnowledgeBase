@@ -1,4 +1,5 @@
 from Classes import *
+import xml.etree.ElementTree as ET
 from utils import retrieve_object_by_identifier, get_class_of_bdo
 
 
@@ -40,4 +41,33 @@ def handle_forget(data):
 
 
 def handle_remember(data):
-    pass
+    '''
+    Hander for the data word remember. Will save a bdo to the knowledge base.
+    :param data:
+    :return:
+    '''
+    # data is list with one element. It is a xml format of a BDO class.
+    # TODO: filter wrong querries
+    xml_string = data[0]
+    try:
+        xml_tree = ET.fromstring(xml_string)
+    except Exception:
+        print('XML parsing not successful.')
+        return False, 21
+    available_classes = {'persondata' : Person,
+               'location' : Location,
+               'room' : Room,
+               'door' : Door,
+               'rcobject' : Rcobject
+               }
+    if xml_tree.tag not in available_classes:
+        print('Class \"' + xml_tree.tag + '\" is not a valid BDO class')
+        return False, 22
+    try:
+        new_obj = available_classes[xml_tree.tag].from_xml(xml_tree)
+        new_obj.save()
+        return True, 0
+    except Exception:
+        print('Error in converting the given xml to a BDO')
+        return False, 23
+

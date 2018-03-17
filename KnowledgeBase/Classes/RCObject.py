@@ -29,3 +29,7 @@ class Rcobject(me.Document):
         inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
         updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
+
+    @classmethod
+    def from_xml(cls):
+        pass

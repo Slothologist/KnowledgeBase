@@ -5,8 +5,8 @@ import xml.etree.ElementTree as ET
 
 
 class Door(me.Document):
-    roomOne = me.ReferenceField(Room)
-    roomTwo = me.ReferenceField(Room)
+    roomone = me.ReferenceField(Room)
+    roomtwo = me.ReferenceField(Room)
     annotation = me.EmbeddedDocumentField(Annotation)
 
     def to_xml(self):
@@ -22,3 +22,7 @@ class Door(me.Document):
         inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
         updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
+
+    @classmethod
+    def from_xml(cls):
+        pass

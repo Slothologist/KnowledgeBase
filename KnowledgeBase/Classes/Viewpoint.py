@@ -20,7 +20,6 @@ class Viewpoint(me.EmbeddedDocument):
         updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
 
-
     @classmethod
     def from_xml(cls, xml_tree):
         vp = Viewpoint()

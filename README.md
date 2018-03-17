@@ -152,7 +152,7 @@ The *NBDO* must be either 'KBase', 'Arena', 'Context', 'RCObjects' or 'Crowd'.
 * get ARENA
   * Will return the entire Arena, with all Locations, Rooms and Doors as Arena object.
 
-## Saving new Data or deleting it
+## Saving or deleting Data 
 Thee are realised by the /KBase/data rosservice call. Each command given over it starts with a 
 command word, i.e. remember or forget. As well as the queries of the query call the commands are 
 designed to somehow resemble human speech. As objects are transmitted via xml, this is somewhat 
@@ -161,14 +161,48 @@ lackluster, especially for remember.
 Commands can also be enhanced with filler words, see above.
 
 ### Remember
+Will save a BDO in the KBase. 'Remember' commands shall be of the form 'remember *BDO*'. The 
+*BDO* must be either a Location, Person, Room or Rcobject in XML-form. To see how the BDOs shall
+be represented, take a look at the *_cleaned.xml in the useful files folder or uncomment the lines 
+at the end of the generate_example_data.py to print a complete KBase in xml format. (Note: The 
+Generator and Timestamp elements are optional and required for downwards compatibility)
 
 ##### Examples
+```
+remember <ROOM name="kitchen" numberofdoors="2">
+            <ANNOTATION label="room:kitchen">
+                <VIEWPOINT label="main">
+                    <POSITIONDATA frameid="map" theta="0.179018005729">
+                        <POINT2D x="14.376999855" y="5.93919992447"/>
+                    </POSITIONDATA>
+                </VIEWPOINT>
+                <PRECISEPOLYGON>
+                    <POINT2D x="14.1516796875" y="7.02464013672"/>
+                    <POINT2D x="16.1996806641" y="6.63552001953"/>
+                    <POINT2D x="16.0972802734" y="5.36575976562"/>
+                    <POINT2D x="14.0492802734" y="5.632"/>
+                </PRECISEPOLYGON>
+            </ANNOTATION>
+         </ROOM>
+```
+Will save a annotation as defined above.
+
+```
+remember <PERSONDATA name="michael" uuid="12345678" faceid="87654321"
+              gender="male" shirtcolor="green" posture="standing"
+              gesture="waving" age="20-25">
+              <POSITIONDATA frameid="map" theta="0.179018005729">
+                 <POINT2D x="14.376999855" y="5.93919992447"/>
+              </POSITIONDATA>
+         </PERSONDATA>
+```
+Will save a Person named michael as defined above.
 
 ### Forget
 Will delete a BDO from the KBase. 'Forget' commands shall be of the form 'forget 
 *unique_identifier*'. The *unique identifier* can be of either a Location, Person, Room or 
 RCObject. Another form, added for convieniance is 'forget all *BDO*'. The *BDO* 
-must be either 'Location', 'Person', 'Room' or 'RCObject' (Plurals are allowed as well).
+must be either 'Location', 'Person', 'Room', 'Door' or 'RCObject' (Plurals are allowed as well).
 It deletes every BDO of the given type.
 
 ##### Examples
@@ -239,3 +273,15 @@ The data storage word was not in the list of accepted or supported data storage 
    - There was no BDO with the specified identifier to be deleted.
    
 #### Starting with 2: Remember queries
+ - 21
+   - The given XML could not be parsed (aka was no valid xml)
+ - 22
+   - The given XMLs basetag is not available for converting to a BDO
+ - 23
+   - The given XML failed to be converted to a BDO
+
+## Todos
+* Test data retrieval after deleting
+  * NBDOs seem to have a problem with their references if they get deleted
+* add missing from_xml functions
+  * room, annotation, door, location, rcobject

@@ -156,9 +156,6 @@ rcobjects = Rcobjects(rcobjects=objs)
 
 kbase = Kbase(arena=arena, crowd=crowd, rcobjects=rcobjects, identifier='TestKBase')
 
-#dump = json.dumps(kbase, cls=ObjectEncoder, indent=2, sort_keys=True)
-#print(dump)
-#print(json.loads(dump, cls=ObjectDecoder).arena.locations)
 
 #print('DEBUG: toxml ')
 bla = kbase.to_xml()
