@@ -1,5 +1,4 @@
 from Classes import *
-import xml.etree.ElementTree as ET
 
 
 def retrieve_object_by_identifier(name):
@@ -17,8 +16,8 @@ def retrieve_object_by_identifier(name):
         print('Failed! Found no person, location, room or RCObject with name ' + name)
         return None
     if len(all_entrys) > 1:
-        print('Found more than one person, location, room or RCObject with name ' +
-              name + ' using Person > Location > Room > RCObject > Person.uuid')
+        print('Warning! Found more than one person, location, room or RCObject with name ' +
+              name)
     return all_entrys[0]
 
 
@@ -125,10 +124,9 @@ def reduce_query(query_string, accepted_w_words):
     if type(query_string) == unicode:
         query_string = query_string.encode('ascii','replace')
 
-
-    # check with which q_word the query starts and replace all of its ' ' with '_'
+    # check with which q_word the query starts and replace all of its ' ' with '%'
     for w_word in accepted_w_words:
-        query_string = query_string.replace(w_word, w_word.replace(' ', '_'))
+        query_string = query_string.replace(w_word, w_word.replace(' ', '%'))
 
     # build a list with all names found in the database
     names =  [x.name for x in Rcobject.objects()]
@@ -137,9 +135,9 @@ def reduce_query(query_string, accepted_w_words):
     names += [x.name for x in Person.objects()]
 
     # check if the query contains any of those names
-    # if yes, replace them with a version where all ' ' are replaced with '_'
+    # if yes, replace them with a version where all ' ' are replaced with '%'
     for name in names:
-        query_string = query_string.replace(name, name.replace(' ', '_'))
+        query_string = query_string.replace(name, name.replace(' ', '%'))
 
     # check for xml
     xml_replacement = 'xml_replace'
@@ -155,8 +153,8 @@ def reduce_query(query_string, accepted_w_words):
     # filter the fillerwords
     query_list = filter_fillwords(query_list)
 
-    # then iterate through the query and replace all '_' with ' ' again and 'xml_replace' with the actual xml
-    query_list = [query.replace(xml_replacement, xml).replace('_', ' ') for query in query_list]
+    # then iterate through the query and replace all '_' with '%' again and 'xml_replace' with the actual xml
+    query_list = [query.replace(xml_replacement, xml).replace('%', ' ') for query in query_list]
 
     # also try not to destroy any xml which may be given
     # smarter way for future: create a sentence-metric with which you could determine the kind of question given (1) and

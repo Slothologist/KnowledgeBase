@@ -28,9 +28,10 @@ def handle_who(query):
     name = query[0]
     pers = retrieve_object_by_identifier(name)
     if type(pers) is not Person:
+        bdo_types = [type(Rcobject), type(Door), type(Location), type(Room)]
         if pers is None:
             return 'Failed, did not find a Person with name ' + name, 61
-        else:
+        if type(pers) in bdo_types:
             return 'Failed, did not find a Person with name ' + name + ' but an ' + str(type(pers)), 62
     return ET.tostring(pers.to_xml()), 0
 
