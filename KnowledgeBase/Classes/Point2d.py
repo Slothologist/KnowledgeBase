@@ -10,6 +10,12 @@ class Point2d(me.EmbeddedDocument):
         attribs = {x: self.__getattribute__(x) for x in self._fields}
         attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element(Point2d.get_tag(), attrib=attribs)
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
 
     @classmethod

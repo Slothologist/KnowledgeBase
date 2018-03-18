@@ -2,7 +2,7 @@
 <LIST type="ANNOTATION">
    <ANNOTATION label="room:kitchen">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="1.491600036621094">
+         <POSITIONDATA frameid="map" theta="1.49160003662">
             <POINT2D x="13.3120002747" y="15.4214000702"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -15,7 +15,7 @@
    </ANNOTATION>
    <ANNOTATION label="room:bedroom">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="1.629609942436218">
+         <POSITIONDATA frameid="map" theta="1.62960994244">
             <POINT2D x="16.8346004486" y="12.2265996933"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -28,7 +28,7 @@
    </ANNOTATION>
    <ANNOTATION label="room:livingroom">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="0">
+         <POSITIONDATA frameid="map" theta="0.0">
             <POINT2D x="13.0867004395" y="10.649600029"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -41,7 +41,7 @@
    </ANNOTATION>
    <ANNOTATION label="room:diningroom">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="0">
+         <POSITIONDATA frameid="map" theta="0.0">
             <POINT2D x="13.4144001007" y="5.61151981354"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -56,7 +56,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:kitchencounter">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="2.308579921722412">
+         <POSITIONDATA frameid="map" theta="2.30857992172">
             <POINT2D x="12.1445999146" y="16.5683002472"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -69,7 +69,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:bookshelf">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="3.066440105438232">
+         <POSITIONDATA frameid="map" theta="3.06644010544">
             <POINT2D x="12.1856002808" y="14.397400856"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -82,7 +82,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:stove">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-0.07128579914569855">
+         <POSITIONDATA frameid="map" theta="-0.0712857991457">
             <POINT2D x="14.2540998459" y="15.7285995483"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -95,7 +95,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:bed">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-1.63592004776001">
+         <POSITIONDATA frameid="map" theta="-1.63592004776">
             <POINT2D x="16.6912002563" y="12.1856002808"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -108,7 +108,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:sidetable">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-0.5680660009384155">
+         <POSITIONDATA frameid="map" theta="-0.568066000938">
             <POINT2D x="17.6947002411" y="12.3493995667"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -121,7 +121,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:cabinet">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="3.024490118026733">
+         <POSITIONDATA frameid="map" theta="3.02449011803">
             <POINT2D x="12.0012998581" y="9.4003200531"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -134,7 +134,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:sofa">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="3.003580093383789">
+         <POSITIONDATA frameid="map" theta="3.00358009338">
             <POINT2D x="11.8578996658" y="8.0691204071"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -147,7 +147,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:couchtable">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-0.1738169938325882">
+         <POSITIONDATA frameid="map" theta="-0.173816993833">
             <POINT2D x="14.5613002777" y="10.3833999634"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -160,7 +160,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:bar">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-0.2276950031518936">
+         <POSITIONDATA frameid="map" theta="-0.227695003152">
             <POINT2D x="14.4793996811" y="8.17152023315"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -173,7 +173,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:dinnertable">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-2.63742995262146">
+         <POSITIONDATA frameid="map" theta="-2.63742995262">
             <POINT2D x="12.4927997589" y="6.3897600174"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -186,7 +186,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:closet">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="-1.570809960365295">
+         <POSITIONDATA frameid="map" theta="-1.57080996037">
             <POINT2D x="14.8684997559" y="4.60799980164"/>
          </POSITIONDATA>
       </VIEWPOINT>
@@ -199,7 +199,7 @@
    </ANNOTATION>
    <ANNOTATION label="location:desk">
       <VIEWPOINT label="main">
-         <POSITIONDATA frameid="map" theta="0.1790180057287216">
+         <POSITIONDATA frameid="map" theta="0.179018005729">
             <POINT2D x="14.376999855" y="5.93919992447"/>
          </POSITIONDATA>
       </VIEWPOINT>

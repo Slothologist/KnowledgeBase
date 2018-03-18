@@ -2,7 +2,7 @@
 <package format="2">
   <name>knowledge_base</name>
   <version>0.1.0</version>
-  <description>The KnowledgeBase package</description>
+  <description>Simple ros database for the robocup at home league.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -13,7 +13,8 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>---none---</license>
+  <author>rfeldhans</author>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->

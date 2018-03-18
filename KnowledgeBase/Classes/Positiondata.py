@@ -14,13 +14,19 @@ class Positiondata(me.EmbeddedDocument):
         attribs = {x: str(attribs[x]) for x in attribs}
         root = ET.Element(Positiondata.get_tag(), attrib=attribs)
         root.append(poi.to_xml())
+
+        gen = ET.SubElement(root, 'GENERATOR')
+        gen.text = 'Kbase'
+        time = ET.SubElement(root, 'TIMESTAMP')
+        inserted = ET.SubElement(time, 'INSERTED', {'value': '1'})
+        updated = ET.SubElement(time, 'UPDATED', {'value': '1'})
         return root
 
     @classmethod
     def from_xml(cls, xml_tree):
         posi = Positiondata()
         posi.frameid = xml_tree.get('frameid')
-        posi.theta = xml_tree.get('theta')
+        posi.theta = float(xml_tree.get('theta'))
         for potential_poi in xml_tree.getchildren():
             if potential_poi.tag == Point2d.get_tag():
                 posi.point2d = Point2d.from_xml(potential_poi)
